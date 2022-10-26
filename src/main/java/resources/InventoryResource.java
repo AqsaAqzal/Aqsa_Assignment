@@ -1,7 +1,9 @@
 package resources;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
@@ -23,6 +25,13 @@ public class InventoryResource {
     public Response addItem(String payload) throws SQLException {
         item = obj.fromJson(payload, Item.class);
         is.insertNewItem(item);
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/delete/{id}")
+    public Response deleteItem(@PathParam("id") int id) throws SQLException {
+        is.removeItem(id);
         return Response.ok().build();
     }
 }
