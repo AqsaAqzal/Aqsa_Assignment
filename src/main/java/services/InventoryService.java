@@ -127,5 +127,37 @@ public class InventoryService {
         }
     }
 
+    public void updateItem(Item item) throws SQLException {
+        String url = "jdbc:mysql://localhost:3306/assignmentdb";
+        String uname = "root";
+        String pass = "root";
+        String query = "UPDATE Inventory SET item_name = ? WHERE id = 1";
+
+
+        Statement st = null;
+        Connection con = null;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            con = DriverManager.getConnection(url, uname, pass);
+            st = con.createStatement();
+
+            PreparedStatement preparedStatement = con.prepareStatement(query);
+
+            preparedStatement.setInt(1, item.getItemId());
+            preparedStatement.setString(2, item.getItemName());
+           // preparedStatement.setInt(3, item.getItemQuantity());
+           // preparedStatement.setInt(4, item.getItemCategoryId());
+           // preparedStatement.setInt(5, item.getItemLocationId());
+            preparedStatement.executeUpdate();
+
+        } catch (Exception ex) {
+            ex.getStackTrace();
+        } finally {
+            st.close();
+            con.close();
+        }
+    }
 }
 

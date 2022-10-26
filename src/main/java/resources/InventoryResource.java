@@ -32,6 +32,7 @@ public class InventoryResource {
         return Response.ok().build();
     }
 
+
     @GET
     @Path("/getById/{id}")
     public String  getItemById(@PathParam("id") int id) throws SQLException {
@@ -46,4 +47,11 @@ public class InventoryResource {
         return itemData;
     }
 
+    @PUT
+    @Path("/update")
+    public Response updateItem(String payload) throws SQLException {
+        item = obj.fromJson(payload, Item.class);
+        is.updateItem(item);
+        return Response.ok().build();
+    }
 }
