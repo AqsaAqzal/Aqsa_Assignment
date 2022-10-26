@@ -1,0 +1,3 @@
+domain\Item.class
+resources\InventoryResource.class
+services\InventoryService.class

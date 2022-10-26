@@ -16,6 +16,9 @@ public class Item {
     @SerializedName(value = "itemCategoryId")
     private int itemCategoryId;
 
+    @SerializedName(value = "itemLocationId")
+    private int itemLocationId;
+
     public int getItemId() {
         return itemId;
     }
@@ -55,8 +58,4 @@ public class Item {
     public void setItemLocationId(int itemLocationId) {
         this.itemLocationId = itemLocationId;
     }
-
-    @SerializedName(value = "itemLocationId")
-    private int itemLocationId;
-
 }
