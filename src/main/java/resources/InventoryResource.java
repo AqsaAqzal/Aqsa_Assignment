@@ -1,9 +1,6 @@
 package resources;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
@@ -33,5 +30,12 @@ public class InventoryResource {
     public Response deleteItem(@PathParam("id") int id) throws SQLException {
         is.removeItem(id);
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("/getById/{id}")
+    public String  getItemById(@PathParam("id") int id) throws SQLException {
+        String itemData = is.readItemById(id);
+        return itemData;
     }
 }
