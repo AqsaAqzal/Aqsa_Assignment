@@ -38,4 +38,12 @@ public class InventoryResource {
         String itemData = is.readItemById(id);
         return itemData;
     }
+
+    @GET
+    @Path("/getAll")
+    public String getAllItems() throws SQLException {
+        String itemData = is.readAllItems();
+        return itemData;
+    }
+
 }

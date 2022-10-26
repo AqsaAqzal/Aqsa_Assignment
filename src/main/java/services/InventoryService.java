@@ -95,5 +95,37 @@ public class InventoryService {
             return itemData;
         }
     }
+
+    public String readAllItems() throws SQLException {
+        String url = "jdbc:mysql://localhost:3306/assignmentdb";
+        String uname = "root";
+        String pass = "root";
+        String query = "SELECT * FROM Inventory";
+
+        Statement st = null;
+        Connection con = null;
+        String itemData= null;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            con = DriverManager.getConnection(url, uname, pass);
+            st = con.createStatement();
+
+            ResultSet rs = st.executeQuery(query);
+
+            while (rs.next()) {
+                itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
+            }
+
+        } catch (Exception ex) {
+            ex.getStackTrace();
+        } finally {
+            st.close();
+            con.close();
+            return itemData;
+        }
+    }
+
 }
 
