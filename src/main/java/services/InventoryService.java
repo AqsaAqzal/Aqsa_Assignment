@@ -131,7 +131,7 @@ public class InventoryService {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
         String uname = "root";
         String pass = "root";
-        String query = "UPDATE Inventory SET item_name = ? WHERE id = 1";
+        String query = "UPDATE Inventory SET item_name = ? WHERE id = ?";
 
 
         Statement st = null;
@@ -145,8 +145,8 @@ public class InventoryService {
 
             PreparedStatement preparedStatement = con.prepareStatement(query);
 
-            preparedStatement.setInt(1, item.getItemId());
-            preparedStatement.setString(2, item.getItemName());
+            preparedStatement.setInt(2, item.getItemId());
+            preparedStatement.setString(1, item.getItemName());
            // preparedStatement.setInt(3, item.getItemQuantity());
            // preparedStatement.setInt(4, item.getItemCategoryId());
            // preparedStatement.setInt(5, item.getItemLocationId());
