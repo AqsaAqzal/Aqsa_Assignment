@@ -43,7 +43,7 @@ public class InventoryResource {
     @Path("/getById/{id}")
     public String  getItemById(@PathParam("id") int id) throws SQLException {
         Item itemData = is.readItemById(id);
-        System.out.println(itemData);
+        System.out.println(itemData.getItemName());
         String payload = obj.toJson(itemData, Item.class);
         System.out.println(payload);
         return payload;

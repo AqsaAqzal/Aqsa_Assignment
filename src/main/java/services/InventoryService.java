@@ -1,15 +1,12 @@
 package services;
 
-import com.google.gson.Gson;
 import domain.Item;
-
 import java.sql.*;
 import java.util.ArrayList;
-
 public class InventoryService {
 
     private Item item = new Item();
-
+    private ArrayList<Item> itemsList = new ArrayList<Item>();
 
     public void insertNewItem(Item item) throws SQLException {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
@@ -74,42 +71,34 @@ public class InventoryService {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
         String uname = "root";
         String pass = "root";
-        String query = "SELECT * FROM Inventory where id = 1";
+        String query = "SELECT * FROM Inventory where id = ?";
 
-        Statement st = null;
+        PreparedStatement ps = null;
         Connection con = null;
-        String itemData= null;
-        Gson obj = new Gson();
-     //   Item item = new Item();
+        ResultSet rs = null;
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             con = DriverManager.getConnection(url, uname, pass);
-            st = con.createStatement();
+            ps = con.prepareStatement(query);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
 
-            ResultSet rs = st.executeQuery(query);
 
-         /*   while (rs.next()) {
-                itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
-            }
-            System.out.println(itemData);
-
-            item = obj.fromJson(itemData, Item.class);
-            System.out.println(item);
-*/
             if(rs.next()) {
                 item.setItemId(rs.getInt("id"));
                 item.setItemName(rs.getString("item_name"));
                 item.setItemQuantity(rs.getInt("item_quantity"));
                 item.setItemCategoryId(rs.getInt("category_id"));
                 item.setItemLocationId(rs.getInt("location_id"));
+                System.out.println(item);
             }
 
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
-            st.close();
+            ps.close();
             con.close();
             return item;
         }
@@ -121,18 +110,16 @@ public class InventoryService {
         String pass = "root";
         String query = "SELECT * FROM Inventory";
 
-        Statement st = null;
         Connection con = null;
-        String itemData= null;
-        ArrayList<Item> itemsList = new ArrayList<Item>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             con = DriverManager.getConnection(url, uname, pass);
-            st = con.createStatement();
-
-            ResultSet rs = st.executeQuery(query);
+            ps = con.prepareStatement(query);
+            rs = ps.executeQuery();
 
         /*    while (rs.next()) {
                 itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
@@ -143,14 +130,13 @@ public class InventoryService {
                 item.setItemQuantity(rs.getInt("item_quantity"));
                 item.setItemCategoryId(rs.getInt("category_id"));
                 item.setItemLocationId(rs.getInt("location_id"));
-              //  System.out.println(item.getItemName());
                 itemsList.add(item);
             }
 
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
-            st.close();
+            ps.close();
             con.close();
             return itemsList;
         }
@@ -193,20 +179,19 @@ public class InventoryService {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
         String uname = "root";
         String pass = "root";
-        String query = "SELECT * FROM Inventory where category_id = 1";
+        String query = "SELECT * FROM Inventory where category_id = ?";
 
-        Statement st = null;
         Connection con = null;
-        String itemData= null;
-        ArrayList<Item> itemsList = new ArrayList<Item>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             con = DriverManager.getConnection(url, uname, pass);
-            st = con.createStatement();
-
-            ResultSet rs = st.executeQuery(query);
+            ps = con.prepareStatement(query);
+            ps.setInt(1, category);
+            rs = ps.executeQuery();
 
         /*    while (rs.next()) {
                 itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
@@ -224,7 +209,7 @@ public class InventoryService {
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
-            st.close();
+            ps.close();
             con.close();
             return itemsList;
         }
@@ -234,20 +219,19 @@ public class InventoryService {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
         String uname = "root";
         String pass = "root";
-        String query = "SELECT * FROM Inventory where location_id = 1";
+        String query = "SELECT * FROM Inventory where location_id = ?";
 
-        Statement st = null;
         Connection con = null;
-        String itemData= null;
-        ArrayList<Item> itemsList = new ArrayList<Item>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             con = DriverManager.getConnection(url, uname, pass);
-            st = con.createStatement();
-
-            ResultSet rs = st.executeQuery(query);
+            ps = con.prepareStatement(query);
+            ps.setInt(1, location);
+            rs = ps.executeQuery();
 
         /*    while (rs.next()) {
                 itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
@@ -265,7 +249,7 @@ public class InventoryService {
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
-            st.close();
+            ps.close();
             con.close();
             return itemsList;
         }
@@ -275,20 +259,20 @@ public class InventoryService {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
         String uname = "root";
         String pass = "root";
-        String query = "SELECT * FROM Inventory where location_id = 2 && category_id = 1";
+        String query = "SELECT * FROM Inventory where location_id = ? && category_id = ?";
 
-        Statement st = null;
         Connection con = null;
-        String itemData= null;
-        ArrayList<Item> itemsList = new ArrayList<Item>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             con = DriverManager.getConnection(url, uname, pass);
-            st = con.createStatement();
-
-            ResultSet rs = st.executeQuery(query);
+            ps = con.prepareStatement(query);
+            ps.setInt(1, location);
+            ps.setInt(2, category);
+            rs = ps.executeQuery();
 
         /*    while (rs.next()) {
                 itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
@@ -306,7 +290,7 @@ public class InventoryService {
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
-            st.close();
+            ps.close();
             con.close();
             return itemsList;
         }
