@@ -1,10 +1,15 @@
 package services;
 
+import com.google.gson.Gson;
 import domain.Item;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class InventoryService {
+
+    private Item item = new Item();
+
 
     public void insertNewItem(Item item) throws SQLException {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
@@ -65,7 +70,7 @@ public class InventoryService {
         }
     }
 
-    public String readItemById(int id) throws SQLException {
+    public Item readItemById(int id) throws SQLException {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
         String uname = "root";
         String pass = "root";
@@ -74,6 +79,8 @@ public class InventoryService {
         Statement st = null;
         Connection con = null;
         String itemData= null;
+        Gson obj = new Gson();
+     //   Item item = new Item();
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -83,8 +90,20 @@ public class InventoryService {
 
             ResultSet rs = st.executeQuery(query);
 
-            while (rs.next()) {
+         /*   while (rs.next()) {
                 itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
+            }
+            System.out.println(itemData);
+
+            item = obj.fromJson(itemData, Item.class);
+            System.out.println(item);
+*/
+            if(rs.next()) {
+                item.setItemId(rs.getInt("id"));
+                item.setItemName(rs.getString("item_name"));
+                item.setItemQuantity(rs.getInt("item_quantity"));
+                item.setItemCategoryId(rs.getInt("category_id"));
+                item.setItemLocationId(rs.getInt("location_id"));
             }
 
         } catch (Exception ex) {
@@ -92,11 +111,11 @@ public class InventoryService {
         } finally {
             st.close();
             con.close();
-            return itemData;
+            return item;
         }
     }
 
-    public String readAllItems() throws SQLException {
+    public ArrayList<Item> readAllItems() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
         String uname = "root";
         String pass = "root";
@@ -105,6 +124,7 @@ public class InventoryService {
         Statement st = null;
         Connection con = null;
         String itemData= null;
+        ArrayList<Item> itemsList = new ArrayList<Item>();
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -114,8 +134,17 @@ public class InventoryService {
 
             ResultSet rs = st.executeQuery(query);
 
-            while (rs.next()) {
+        /*    while (rs.next()) {
                 itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
+            }*/
+            while (rs.next()) {
+                item.setItemId(rs.getInt("id"));
+                item.setItemName(rs.getString("item_name"));
+                item.setItemQuantity(rs.getInt("item_quantity"));
+                item.setItemCategoryId(rs.getInt("category_id"));
+                item.setItemLocationId(rs.getInt("location_id"));
+              //  System.out.println(item.getItemName());
+                itemsList.add(item);
             }
 
         } catch (Exception ex) {
@@ -123,7 +152,7 @@ public class InventoryService {
         } finally {
             st.close();
             con.close();
-            return itemData;
+            return itemsList;
         }
     }
 
@@ -157,6 +186,129 @@ public class InventoryService {
         } finally {
             st.close();
             con.close();
+        }
+    }
+
+    public ArrayList<Item> readItemsByCategory(int category) throws SQLException {
+        String url = "jdbc:mysql://localhost:3306/assignmentdb";
+        String uname = "root";
+        String pass = "root";
+        String query = "SELECT * FROM Inventory where category_id = 1";
+
+        Statement st = null;
+        Connection con = null;
+        String itemData= null;
+        ArrayList<Item> itemsList = new ArrayList<Item>();
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            con = DriverManager.getConnection(url, uname, pass);
+            st = con.createStatement();
+
+            ResultSet rs = st.executeQuery(query);
+
+        /*    while (rs.next()) {
+                itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
+            }*/
+            while (rs.next()) {
+                item.setItemId(rs.getInt("id"));
+                item.setItemName(rs.getString("item_name"));
+                item.setItemQuantity(rs.getInt("item_quantity"));
+                item.setItemCategoryId(rs.getInt("category_id"));
+                item.setItemLocationId(rs.getInt("location_id"));
+                System.out.println(item.getItemName());
+                itemsList.add(item);
+            }
+
+        } catch (Exception ex) {
+            ex.getStackTrace();
+        } finally {
+            st.close();
+            con.close();
+            return itemsList;
+        }
+    }
+
+    public ArrayList<Item> readItemsByLocation(int location) throws SQLException {
+        String url = "jdbc:mysql://localhost:3306/assignmentdb";
+        String uname = "root";
+        String pass = "root";
+        String query = "SELECT * FROM Inventory where location_id = 1";
+
+        Statement st = null;
+        Connection con = null;
+        String itemData= null;
+        ArrayList<Item> itemsList = new ArrayList<Item>();
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            con = DriverManager.getConnection(url, uname, pass);
+            st = con.createStatement();
+
+            ResultSet rs = st.executeQuery(query);
+
+        /*    while (rs.next()) {
+                itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
+            }*/
+            while (rs.next()) {
+                item.setItemId(rs.getInt("id"));
+                item.setItemName(rs.getString("item_name"));
+                item.setItemQuantity(rs.getInt("item_quantity"));
+                item.setItemCategoryId(rs.getInt("category_id"));
+                item.setItemLocationId(rs.getInt("location_id"));
+                System.out.println(item.getItemName());
+                itemsList.add(item);
+            }
+
+        } catch (Exception ex) {
+            ex.getStackTrace();
+        } finally {
+            st.close();
+            con.close();
+            return itemsList;
+        }
+    }
+
+    public ArrayList<Item> readItemsByLocationandCategory(int location, int category) throws SQLException {
+        String url = "jdbc:mysql://localhost:3306/assignmentdb";
+        String uname = "root";
+        String pass = "root";
+        String query = "SELECT * FROM Inventory where location_id = 2 && category_id = 1";
+
+        Statement st = null;
+        Connection con = null;
+        String itemData= null;
+        ArrayList<Item> itemsList = new ArrayList<Item>();
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            con = DriverManager.getConnection(url, uname, pass);
+            st = con.createStatement();
+
+            ResultSet rs = st.executeQuery(query);
+
+        /*    while (rs.next()) {
+                itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
+            }*/
+            while (rs.next()) {
+                item.setItemId(rs.getInt("id"));
+                item.setItemName(rs.getString("item_name"));
+                item.setItemQuantity(rs.getInt("item_quantity"));
+                item.setItemCategoryId(rs.getInt("category_id"));
+                item.setItemLocationId(rs.getInt("location_id"));
+                System.out.println(item.getItemName());
+                itemsList.add(item);
+            }
+
+        } catch (Exception ex) {
+            ex.getStackTrace();
+        } finally {
+            st.close();
+            con.close();
+            return itemsList;
         }
     }
 }
