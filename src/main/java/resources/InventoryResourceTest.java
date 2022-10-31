@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class InventoryResourceTest extends TestCase{
+public class InventoryResourceTest {
 
     @Test
     public void insertIntoTable() {
