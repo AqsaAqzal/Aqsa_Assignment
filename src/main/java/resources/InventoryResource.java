@@ -26,6 +26,9 @@ public class InventoryResource {
     @Path("/add")
     public Response addItem(String payload) throws SQLException {
         item = obj.fromJson(payload, Item.class);
+        if(item.getItemId() === null) {
+            return Response.Status.BAD_REQUEST
+        }
         is.insertNewItem(item);
         return Response.ok().build();
     }
@@ -83,7 +86,7 @@ public class InventoryResource {
 
     @GET
     @Path("/getByLocationandCategory/{location}/{category}")
-    public String  getItemsByLocation(@PathParam("location") int location, @PathParam("category") int category) throws SQLException {
+    public String  getItemsByLocationAndCategory(@PathParam("location") int location, @PathParam("category") int category) throws SQLException {
         items = is.readItemsByLocationandCategory(location, category);
         String str = obj.toJson(items);
         return str;
