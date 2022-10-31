@@ -5,7 +5,6 @@ import java.sql.*;
 import java.util.ArrayList;
 public class InventoryService {
 
-    private Item item = new Item();
     private ArrayList<Item> itemsList = new ArrayList<Item>();
 
     public void insertNewItem(Item item) throws SQLException {
@@ -77,6 +76,7 @@ public class InventoryService {
         Connection con = null;
         ResultSet rs = null;
 
+        Item item = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
@@ -86,7 +86,8 @@ public class InventoryService {
             rs = ps.executeQuery();
 
 
-            if(rs.next()) {
+            if (rs.next()) {
+                item = new Item();
                 item.setItemId(rs.getInt("id"));
                 item.setItemName(rs.getString("item_name"));
                 item.setItemQuantity(rs.getInt("item_quantity"));
@@ -121,10 +122,8 @@ public class InventoryService {
             ps = con.prepareStatement(query);
             rs = ps.executeQuery();
 
-        /*    while (rs.next()) {
-                itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
-            }*/
             while (rs.next()) {
+                 Item item = new Item();
                 item.setItemId(rs.getInt("id"));
                 item.setItemName(rs.getString("item_name"));
                 item.setItemQuantity(rs.getInt("item_quantity"));
@@ -193,10 +192,8 @@ public class InventoryService {
             ps.setInt(1, category);
             rs = ps.executeQuery();
 
-        /*    while (rs.next()) {
-                itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
-            }*/
             while (rs.next()) {
+                 Item item = new Item();
                 item.setItemId(rs.getInt("id"));
                 item.setItemName(rs.getString("item_name"));
                 item.setItemQuantity(rs.getInt("item_quantity"));
@@ -233,10 +230,8 @@ public class InventoryService {
             ps.setInt(1, location);
             rs = ps.executeQuery();
 
-        /*    while (rs.next()) {
-                itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
-            }*/
             while (rs.next()) {
+                 Item item = new Item();
                 item.setItemId(rs.getInt("id"));
                 item.setItemName(rs.getString("item_name"));
                 item.setItemQuantity(rs.getInt("item_quantity"));
@@ -274,10 +269,8 @@ public class InventoryService {
             ps.setInt(2, category);
             rs = ps.executeQuery();
 
-        /*    while (rs.next()) {
-                itemData += rs.getInt("id") + " " + rs.getString("item_name") + " " + rs.getInt("item_quantity") + " " + rs.getInt("category_id") + " " + rs.getInt("location_id");
-            }*/
             while (rs.next()) {
+                 Item item = new Item();
                 item.setItemId(rs.getInt("id"));
                 item.setItemName(rs.getString("item_name"));
                 item.setItemQuantity(rs.getInt("item_quantity"));

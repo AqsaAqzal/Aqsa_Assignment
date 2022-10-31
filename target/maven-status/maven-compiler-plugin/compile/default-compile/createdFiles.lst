@@ -1,3 +1,4 @@
-domain\Item.class
+resources\InventoryResourceTest.class
 resources\InventoryResource.class
+domain\Item.class
 services\InventoryService.class
