@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import javax.ws.rs.core.Response;
 
+import java.sql.SQLException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -30,6 +32,7 @@ public class InventoryResourceTest {
         }
     }
 
+
     @Test
     public void updateTable() {
 
@@ -45,25 +48,30 @@ public class InventoryResourceTest {
         }
     }
 
-   /* @Test
-    public void deleteFromTable() {
+    /**
+     *
+     * @throws SQLException
+     */
+   @Test
+    public void deleteFromTable() throws SQLException {
 
         InventoryResource ir = new InventoryResource();
-        int id = 4;
+        int id = 3;
+        Response res = ir.deleteItem(id);
         try {
-            assertEquals(Response.ok().build(), ir.deleteItem(id));
+            assertEquals( 200, res.getStatus());
         }
         catch(Exception ex) {
             ex.getStackTrace();
         }
-    }*/
+    }
 
     @Test
     public void itemWithId3() {
 
         InventoryResource ir = new InventoryResource();
         int id = 3;
-        String str = "{\"itemId\":3,\"itemName\":\"samsung galaxy\",\"itemQuantity\":3,\"itemCategoryId\":1,\"itemLocationId\":2}";
+        String str = "{\"itemId\":3,\"itemName\":\"samsung galaxy\",\"itemQuantity\":33,\"itemCategoryId\":1,\"itemLocationId\":2}";
 
         try {
             assertEquals(str, ir.getItemById(id));
@@ -77,7 +85,7 @@ public class InventoryResourceTest {
     public void allItemsOfTable() {
 
         InventoryResource ir = new InventoryResource();
-        String  str = "[{\"itemId\":1,\"itemName\":\"hp\",\"itemQuantity\":5,\"itemCategoryId\":2,\"itemLocationId\":3},{\"itemId\":3,\"itemName\":\"samsung galaxy\",\"itemQuantity\":3,\"itemCategoryId\":1,\"itemLocationId\":2}]";
+        String str = "[{\"itemId\":1,\"itemName\":\"hp\",\"itemQuantity\":5,\"itemCategoryId\":2,\"itemLocationId\":3},{\"itemId\":2,\"itemName\":\"iphone\",\"itemQuantity\":2,\"itemCategoryId\":1,\"itemLocationId\":2}]";
 
         try {
             assertEquals(str, ir.getAllItems());
@@ -118,7 +126,7 @@ public class InventoryResourceTest {
     @Test
     public void itemWithLocationIdequalsTo2AndCategoryEqualsTo1() {
         InventoryResource ir = new InventoryResource();
-        String  str = "[{\"itemId\":3,\"itemName\":\"samsung galaxy\",\"itemQuantity\":3,\"itemCategoryId\":1,\"itemLocationId\":2}]";
+        String str = "[{\"itemId\":2,\"itemName\":\"iphone\",\"itemQuantity\":2,\"itemCategoryId\":1,\"itemLocationId\":2}]";
         int location = 2;
         int category =1;
 
@@ -129,6 +137,21 @@ public class InventoryResourceTest {
             ex.getStackTrace();
         }
     }
+
+    @Test
+    public void notAllItemsOfTable() {
+
+        InventoryResource ir = new InventoryResource();
+        String str = "[{\"itemId\":1,\"itemName\":\"hp\",\"itemQuantity\":5,\"itemCategoryId\":2,\"itemLocationId\":3}]";
+
+        try {
+            assertNotEquals(str, ir.getAllItems());
+        }
+        catch(Exception ex) {
+            ex.getStackTrace();
+        }
+    }
+
 
 }
 
