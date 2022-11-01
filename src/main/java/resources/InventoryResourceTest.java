@@ -14,6 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class InventoryResourceTest {
 
+    /**
+     * junit for insert new item to a table method
+     */
+
     @Test
     public void insertIntoTable() {
 
@@ -32,7 +36,9 @@ public class InventoryResourceTest {
         }
     }
 
-
+    /**
+     * junit for update a record in table method
+     */
     @Test
     public void updateTable() {
 
@@ -49,10 +55,10 @@ public class InventoryResourceTest {
     }
 
     /**
-     *
+     * junit for delete a record from table method
      * @throws SQLException
      */
-   @Test
+  @Test
     public void deleteFromTable() throws SQLException {
 
         InventoryResource ir = new InventoryResource();
@@ -65,7 +71,9 @@ public class InventoryResourceTest {
             ex.getStackTrace();
         }
     }
-
+    /**
+     * junit for getting the record of an item with id=3
+     */
     @Test
     public void itemWithId3() {
 
@@ -81,6 +89,9 @@ public class InventoryResourceTest {
         }
     }
 
+    /**
+     * junit for getting the records of all present items in table
+     */
     @Test
     public void allItemsOfTable() {
 
@@ -95,6 +106,9 @@ public class InventoryResourceTest {
         }
     }
 
+    /**
+     * junit for getting the records with category_id=2
+     */
     @Test
     public void itemWithCategoryIdequalsTo2() {
         InventoryResource ir = new InventoryResource();
@@ -109,6 +123,9 @@ public class InventoryResourceTest {
         }
     }
 
+    /**
+     * junit for getting the record/s of item/s with location_id=3
+     */
     @Test
     public void itemWithLocationIdequalsTo3() {
         InventoryResource ir = new InventoryResource();
@@ -122,6 +139,10 @@ public class InventoryResourceTest {
             ex.getStackTrace();
         }
     }
+
+    /**
+     * junit for getting the record/s of item/s with location_id=2 and category_id=1
+     */
 
     @Test
     public void itemWithLocationIdequalsTo2AndCategoryEqualsTo1() {
@@ -138,6 +159,9 @@ public class InventoryResourceTest {
         }
     }
 
+    /**
+     * junit for a negative test case for not getting all records from table
+     */
     @Test
     public void notAllItemsOfTable() {
 
