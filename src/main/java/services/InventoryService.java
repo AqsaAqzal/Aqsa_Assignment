@@ -7,6 +7,12 @@ public class InventoryService {
 
     private ArrayList<Item> itemsList = new ArrayList<Item>();
 
+    /**
+     * connects with db and inserts a new record in inventory table
+     * @param item an object of item that is to be created in table as a new record
+     * @throws SQLException
+     */
+
     public void insertNewItem(Item item) throws SQLException {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
         String uname = "root";
@@ -39,6 +45,12 @@ public class InventoryService {
         }
     }
 
+    /**
+     * connects to db and deletes a particular record from inventory table
+     * @param id item id whose record is to be deleted
+     * @throws SQLException
+     */
+
     public void removeItem(int id) throws SQLException {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
         String uname = "root";
@@ -65,6 +77,13 @@ public class InventoryService {
             con.close();
         }
     }
+
+    /**
+     * connects to db and fetches a particular item from inventory table for a specified item id
+     * @param id item id whose record is required
+     * @return returns an item object for the item id specified as parameter
+     * @throws SQLException
+     */
 
     public Item readItemById(int id) throws SQLException {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
@@ -105,6 +124,12 @@ public class InventoryService {
         }
     }
 
+    /**
+     * connects to db and fetches all records from inventor table
+     * @return returns a list of item objects whose records were present in inventory table
+     * @throws SQLException
+     */
+
     public ArrayList<Item> readAllItems() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
         String uname = "root";
@@ -141,6 +166,12 @@ public class InventoryService {
         }
     }
 
+    /**
+     * connects with db and updates a particular record in inventory table
+     * @param item an item objects whose values are to be updated
+     * @throws SQLException
+     */
+
     public void updateItem(Item item) throws SQLException {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
         String uname = "root";
@@ -174,6 +205,12 @@ public class InventoryService {
         }
     }
 
+    /**
+     * connects to db and fetches record/s for a particular category that is specified
+     * @param category category id whose records are required
+     * @return returns a list of items for a specific category
+     * @throws SQLException
+     */
     public ArrayList<Item> readItemsByCategory(int category) throws SQLException {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
         String uname = "root";
@@ -211,6 +248,13 @@ public class InventoryService {
             return itemsList;
         }
     }
+
+    /**
+     * fetches record/s for a particular location that is specified
+     * @param location location id for which the records are required to be fetched
+     * @return returns a list of items for the specified location
+     * @throws SQLException
+     */
 
     public ArrayList<Item> readItemsByLocation(int location) throws SQLException {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
@@ -250,6 +294,13 @@ public class InventoryService {
         }
     }
 
+    /**
+     * connects to db and fetches records for a particular category and a particular location
+     * @param location location id for which the records are required
+     * @param category category id for which the records are required
+     * @return returns a list of items that matches a particular location and category that are specified in the parameters
+     * @throws SQLException
+     */
     public ArrayList<Item> readItemsByLocationandCategory(int location, int category) throws SQLException {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";
         String uname = "root";
