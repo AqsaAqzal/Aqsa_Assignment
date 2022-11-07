@@ -7,6 +7,7 @@ public class InventoryService {
 
     private ArrayList<Item> itemsList = new ArrayList<Item>();
 
+
     /**
      * connects with db and inserts a new record in inventory table
      * @param item an object of item that is to be created in table as a new record
@@ -166,11 +167,11 @@ public class InventoryService {
         }
     }
 
-    /**
-     * connects with db and updates a particular record in inventory table
-     * @param item an item objects whose values are to be updated
-     * @throws SQLException
-     */
+        /**
+         * connects with db and updates a particular record in inventory table
+         * @param item an item objects whose values are to be updated
+         * @throws SQLException
+         */
 
     public void updateItem(Item item) throws SQLException {
         String url = "jdbc:mysql://localhost:3306/assignmentdb";

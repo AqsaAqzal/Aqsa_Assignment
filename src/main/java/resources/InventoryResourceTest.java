@@ -1,23 +1,14 @@
 package resources;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-import junit.runner.BaseTestRunner;
 import org.junit.Test;
-
 import javax.ws.rs.core.Response;
-
 import java.sql.SQLException;
-
 import static org.junit.jupiter.api.Assertions.*;
-
-
 public class InventoryResourceTest {
 
     /**
      * junit for insert new item to a table method
      */
-
     @Test
     public void insertIntoTable() {
 
@@ -92,6 +83,8 @@ public class InventoryResourceTest {
     /**
      * junit for getting the records of all present items in table
      */
+
+    /*
     @Test
     public void allItemsOfTable() {
 
@@ -105,6 +98,7 @@ public class InventoryResourceTest {
             ex.getStackTrace();
         }
     }
+     */
 
     /**
      * junit for getting the records with category_id=2
@@ -162,6 +156,8 @@ public class InventoryResourceTest {
     /**
      * junit for a negative test case for not getting all records from table
      */
+
+    /*
     @Test
     public void notAllItemsOfTable() {
 
@@ -175,7 +171,7 @@ public class InventoryResourceTest {
             ex.getStackTrace();
         }
     }
-
+     */
 
 }
 

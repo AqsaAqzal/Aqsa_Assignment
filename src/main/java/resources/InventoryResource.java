@@ -1,12 +1,18 @@
 package resources;
 
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
+import com.mysql.cj.util.Base64Decoder;
 import domain.Item;
+import jdk.internal.dynalink.support.NameCodec;
 import services.InventoryService;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 @Path("/inventory")
 public class InventoryResource {
@@ -64,7 +70,14 @@ public class InventoryResource {
      */
     @GET
     @Path("/getAll")
-    public String getAllItems() throws SQLException {
+    public String getAllItems(@Context ContainerRequestContext request) throws SQLException {
+        String authHeader = request.getHeaders().getFirst("authorization");
+        String headerDetails[] = authHeader.split(" ");
+        byte[] decodedBytes = Base64.getDecoder().decode(headerDetails[1]);
+        String decodedString = new String(decodedBytes);
+        String credentials[] = decodedString.split(":");
+        String username = credentials[0], password = credentials[1];
+
         items = is.readAllItems();
         String itemsJson = obj.toJson(items);
         return itemsJson;
