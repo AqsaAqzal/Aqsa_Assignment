@@ -7,6 +7,24 @@ public class InventoryService {
 
     private ArrayList<Item> itemsList = new ArrayList<Item>();
 
+    /**
+     * a method for executing the result set
+     * @param rs the result set that is to be executed
+     * @return a list of items in result set
+     * @throws SQLException
+     */
+    public ArrayList<Item> executeResultSet(ResultSet rs) throws SQLException {
+        while (rs.next()) {
+            Item item = new Item();
+            item.setItemId(rs.getInt("id"));
+            item.setItemName(rs.getString("item_name"));
+            item.setItemQuantity(rs.getInt("item_quantity"));
+            item.setItemCategoryId(rs.getInt("category_id"));
+            item.setItemLocationId(rs.getInt("location_id"));
+            itemsList.add(item);
+        }
+        return itemsList;
+    }
 
     /**
      * connects with db and inserts a new record in inventory table
@@ -147,16 +165,7 @@ public class InventoryService {
             con = DriverManager.getConnection(url, uname, pass);
             ps = con.prepareStatement(query);
             rs = ps.executeQuery();
-
-            while (rs.next()) {
-                 Item item = new Item();
-                item.setItemId(rs.getInt("id"));
-                item.setItemName(rs.getString("item_name"));
-                item.setItemQuantity(rs.getInt("item_quantity"));
-                item.setItemCategoryId(rs.getInt("category_id"));
-                item.setItemLocationId(rs.getInt("location_id"));
-                itemsList.add(item);
-            }
+            itemsList = executeResultSet(rs);
 
         } catch (Exception ex) {
             ex.getStackTrace();
@@ -229,17 +238,7 @@ public class InventoryService {
             ps = con.prepareStatement(query);
             ps.setInt(1, category);
             rs = ps.executeQuery();
-
-            while (rs.next()) {
-                 Item item = new Item();
-                item.setItemId(rs.getInt("id"));
-                item.setItemName(rs.getString("item_name"));
-                item.setItemQuantity(rs.getInt("item_quantity"));
-                item.setItemCategoryId(rs.getInt("category_id"));
-                item.setItemLocationId(rs.getInt("location_id"));
-                System.out.println(item.getItemName());
-                itemsList.add(item);
-            }
+            itemsList = executeResultSet(rs);
 
         } catch (Exception ex) {
             ex.getStackTrace();
@@ -274,17 +273,7 @@ public class InventoryService {
             ps = con.prepareStatement(query);
             ps.setInt(1, location);
             rs = ps.executeQuery();
-
-            while (rs.next()) {
-                 Item item = new Item();
-                item.setItemId(rs.getInt("id"));
-                item.setItemName(rs.getString("item_name"));
-                item.setItemQuantity(rs.getInt("item_quantity"));
-                item.setItemCategoryId(rs.getInt("category_id"));
-                item.setItemLocationId(rs.getInt("location_id"));
-                System.out.println(item.getItemName());
-                itemsList.add(item);
-            }
+            itemsList = executeResultSet(rs);
 
         } catch (Exception ex) {
             ex.getStackTrace();
@@ -320,17 +309,7 @@ public class InventoryService {
             ps.setInt(1, location);
             ps.setInt(2, category);
             rs = ps.executeQuery();
-
-            while (rs.next()) {
-                 Item item = new Item();
-                item.setItemId(rs.getInt("id"));
-                item.setItemName(rs.getString("item_name"));
-                item.setItemQuantity(rs.getInt("item_quantity"));
-                item.setItemCategoryId(rs.getInt("category_id"));
-                item.setItemLocationId(rs.getInt("location_id"));
-                System.out.println(item.getItemName());
-                itemsList.add(item);
-            }
+            itemsList = executeResultSet(rs);
 
         } catch (Exception ex) {
             ex.getStackTrace();
