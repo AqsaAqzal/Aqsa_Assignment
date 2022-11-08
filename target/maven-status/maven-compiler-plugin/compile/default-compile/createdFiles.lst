@@ -1,4 +1,5 @@
 resources\InventoryResourceTest.class
 resources\InventoryResource.class
+common\Credentials.class
 domain\Item.class
 services\InventoryService.class

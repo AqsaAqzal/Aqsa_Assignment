@@ -7,6 +7,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
 import com.mysql.cj.util.Base64Decoder;
+import common.Credentials;
 import domain.Item;
 import jdk.internal.dynalink.support.NameCodec;
 import services.InventoryService;
@@ -70,7 +71,8 @@ public class InventoryResource {
      */
     @GET
     @Path("/getAll")
-    public String getAllItems(@Context ContainerRequestContext request) throws SQLException {
+    public Response getAllItems(@Context ContainerRequestContext request) throws SQLException {
+        Response res;
         String authHeader = request.getHeaders().getFirst("authorization");
         String headerDetails[] = authHeader.split(" ");
         byte[] decodedBytes = Base64.getDecoder().decode(headerDetails[1]);
@@ -78,9 +80,16 @@ public class InventoryResource {
         String credentials[] = decodedString.split(":");
         String username = credentials[0], password = credentials[1];
 
-        items = is.readAllItems();
-        String itemsJson = obj.toJson(items);
-        return itemsJson;
+        if (Credentials.username.equals(username) && Credentials.password.equals(password)) {
+            System.out.println("authorized");
+            items = is.readAllItems();
+            String itemsJson = obj.toJson(items);
+            return Response.ok().build();
+        } else {
+            System.out.println("failed");
+         //  return Response.status(Response.Status.UNAUTHORIZED
+            return Response.status(401, "unauthorized").build();
+        }
     }
 
     /**
