@@ -84,11 +84,11 @@ public class InventoryResource {
             System.out.println("authorized");
             items = is.readAllItems();
             String itemsJson = obj.toJson(items);
-            return Response.ok().build();
+            return Response.status(200).entity(itemsJson).build();
         } else {
             System.out.println("failed");
          //  return Response.status(Response.Status.UNAUTHORIZED
-            return Response.status(401, "unauthorized").build();
+            return Response.status(401).entity("Unauthorized").build();
         }
     }
 
