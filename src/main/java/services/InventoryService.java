@@ -1,11 +1,33 @@
 package services;
 
+import common.Credentials;
 import domain.Item;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Base64;
 public class InventoryService {
 
     private ArrayList<Item> itemsList = new ArrayList<Item>();
+
+    /**
+     * method to check if the user is authorized or not
+     * @param authHeader auth details provided by client hitting the api
+     * @return returns true if user is authorized else returns false
+     */
+    public boolean isAuthorized(String authHeader) {
+        String headerDetails[] = authHeader.split(" ");
+        byte[] decodedBytes = Base64.getDecoder().decode(headerDetails[1]);
+        String decodedString = new String(decodedBytes);
+        String credentials[] = decodedString.split(":");
+        String username = credentials[0], password = credentials[1];
+
+        if (Credentials.username.equals(username) && Credentials.password.equals(password)) {
+            return true;
+        }
+            else {
+                return false;
+            }
+        }
 
     /**
      * a method for executing the result set
@@ -319,5 +341,6 @@ public class InventoryService {
             return itemsList;
         }
     }
+
 }
 
