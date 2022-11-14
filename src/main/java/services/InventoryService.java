@@ -1,7 +1,10 @@
 package services;
 
 import common.Credentials;
+import connpooling.HikariCPTest;
 import domain.Item;
+
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -60,16 +63,13 @@ public class InventoryService {
         String pass = "root";
         String query = "insert into Inventory(id, item_name, item_quantity, category_id, location_id) values (?, ?, ?, ?, ?)";
 
-        Statement st = null;
         Connection con = null;
+        PreparedStatement preparedStatement = null;
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            con = DriverManager.getConnection(url, uname, pass);
-            st = con.createStatement();
-
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            DataSource dataSource = HikariCPTest.getDataSource();
+            con = dataSource.getConnection();
+            preparedStatement = con.prepareStatement(query);
 
             preparedStatement.setInt(1, item.getItemId());
             preparedStatement.setString(2, item.getItemName());
@@ -81,7 +81,7 @@ public class InventoryService {
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
-            st.close();
+            preparedStatement.close();
             con.close();
         }
     }
@@ -98,23 +98,20 @@ public class InventoryService {
         String pass = "root";
         String query = "DELETE FROM Inventory WHERE id = ?";
 
-        Statement st = null;
         Connection con = null;
+        PreparedStatement preparedStatement = null;
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            con = DriverManager.getConnection(url, uname, pass);
-            st = con.createStatement();
-
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            DataSource dataSource = HikariCPTest.getDataSource();
+            con = dataSource.getConnection();
+            preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
 
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
-            st.close();
+            preparedStatement.close();
             con.close();
         }
     }
@@ -132,19 +129,17 @@ public class InventoryService {
         String pass = "root";
         String query = "SELECT * FROM Inventory where id = ?";
 
-        PreparedStatement ps = null;
+        PreparedStatement preparedStatement = null;
         Connection con = null;
         ResultSet rs = null;
 
         Item item = null;
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            con = DriverManager.getConnection(url, uname, pass);
-            ps = con.prepareStatement(query);
-            ps.setInt(1, id);
-            rs = ps.executeQuery();
-
+            DataSource dataSource = HikariCPTest.getDataSource();
+            con = dataSource.getConnection();
+            preparedStatement = con.prepareStatement(query);
+            preparedStatement.setInt(1, id);
+            rs = preparedStatement.executeQuery();
 
             if (rs.next()) {
                 item = new Item();
@@ -159,7 +154,7 @@ public class InventoryService {
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
-            ps.close();
+            preparedStatement.close();
             con.close();
             return item;
         }
@@ -178,21 +173,20 @@ public class InventoryService {
         String query = "SELECT * FROM Inventory";
 
         Connection con = null;
-        PreparedStatement ps = null;
+        PreparedStatement preparedStatement = null;
         ResultSet rs = null;
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            con = DriverManager.getConnection(url, uname, pass);
-            ps = con.prepareStatement(query);
-            rs = ps.executeQuery();
+            DataSource dataSource = HikariCPTest.getDataSource();
+            con = dataSource.getConnection();
+            preparedStatement = con.prepareStatement(query);
+            rs = preparedStatement.executeQuery();
             itemsList = executeResultSet(rs);
 
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
-            ps.close();
+            preparedStatement.close();
             con.close();
             return itemsList;
         }
@@ -210,18 +204,13 @@ public class InventoryService {
         String pass = "root";
         String query = "UPDATE Inventory SET item_name = ? WHERE id = ?";
 
-
-        Statement st = null;
         Connection con = null;
+        PreparedStatement preparedStatement = null;
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            con = DriverManager.getConnection(url, uname, pass);
-            st = con.createStatement();
-
-            PreparedStatement preparedStatement = con.prepareStatement(query);
-
+            DataSource dataSource = HikariCPTest.getDataSource();
+            con = dataSource.getConnection();
+            preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(2, item.getItemId());
             preparedStatement.setString(1, item.getItemName());
            // preparedStatement.setInt(3, item.getItemQuantity());
@@ -232,7 +221,7 @@ public class InventoryService {
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
-            st.close();
+            preparedStatement.close();
             con.close();
         }
     }
@@ -250,22 +239,21 @@ public class InventoryService {
         String query = "SELECT * FROM Inventory where category_id = ?";
 
         Connection con = null;
-        PreparedStatement ps = null;
+        PreparedStatement preparedStatement = null;
         ResultSet rs = null;
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            con = DriverManager.getConnection(url, uname, pass);
-            ps = con.prepareStatement(query);
-            ps.setInt(1, category);
-            rs = ps.executeQuery();
+            DataSource dataSource = HikariCPTest.getDataSource();
+            con = dataSource.getConnection();
+            preparedStatement = con.prepareStatement(query);
+            preparedStatement.setInt(1, category);
+            rs = preparedStatement.executeQuery();
             itemsList = executeResultSet(rs);
 
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
-            ps.close();
+            preparedStatement.close();
             con.close();
             return itemsList;
         }
@@ -285,22 +273,21 @@ public class InventoryService {
         String query = "SELECT * FROM Inventory where location_id = ?";
 
         Connection con = null;
-        PreparedStatement ps = null;
+        PreparedStatement preparedStatement = null;
         ResultSet rs = null;
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            con = DriverManager.getConnection(url, uname, pass);
-            ps = con.prepareStatement(query);
-            ps.setInt(1, location);
-            rs = ps.executeQuery();
+            DataSource dataSource = HikariCPTest.getDataSource();
+            con = dataSource.getConnection();
+            preparedStatement = con.prepareStatement(query);
+            preparedStatement.setInt(1, location);
+            rs = preparedStatement.executeQuery();
             itemsList = executeResultSet(rs);
 
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
-            ps.close();
+            preparedStatement.close();
             con.close();
             return itemsList;
         }
@@ -320,23 +307,23 @@ public class InventoryService {
         String query = "SELECT * FROM Inventory where location_id = ? && category_id = ?";
 
         Connection con = null;
-        PreparedStatement ps = null;
+        PreparedStatement preparedStatement = null;
         ResultSet rs = null;
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            DataSource dataSource = HikariCPTest.getDataSource();
+            con = dataSource.getConnection();
+            preparedStatement = con.prepareStatement(query);
 
-            con = DriverManager.getConnection(url, uname, pass);
-            ps = con.prepareStatement(query);
-            ps.setInt(1, location);
-            ps.setInt(2, category);
-            rs = ps.executeQuery();
+            preparedStatement.setInt(1, location);
+            preparedStatement.setInt(2, category);
+            rs = preparedStatement.executeQuery();
             itemsList = executeResultSet(rs);
 
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
-            ps.close();
+            preparedStatement.close();
             con.close();
             return itemsList;
         }
