@@ -7,6 +7,7 @@ import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
 import domain.Item;
 import services.InventoryService;
+import services.InventoryServiceImpl;
 import java.sql.SQLException;
 import java.util.ArrayList;
 @Path("/inventory")
@@ -14,7 +15,7 @@ public class InventoryResource {
 
     private Item item = new Item();
     private Gson obj = new Gson();
-    private InventoryService is = new InventoryService();
+    private InventoryService is = new InventoryServiceImpl();
     private ArrayList<Item> items = new ArrayList<Item>();
 
     /***
@@ -172,7 +173,6 @@ public class InventoryResource {
         String str = obj.toJson(items);
             return Response.status(200).entity(str).build();
         } else {
-            System.out.println("failed");
             return Response.status(401).entity("Unauthorized").build();
         }
     }

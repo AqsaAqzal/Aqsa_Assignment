@@ -5,67 +5,38 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.sql.DataSource;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-    public class HikariCPTest
-    {
 
-        private static DataSource datasource;
+public class HikariCPTest {
 
-        public static DataSource getDataSource()
-        {
-            if(datasource == null)
-            {
-                HikariConfig config = new HikariConfig();
+    private static DataSource datasource;
 
-                config.setJdbcUrl("jdbc:mysql://localhost:3306/assignmentdb");
-                config.setUsername("root");
-                config.setPassword("root");
+    public static DataSource getDataSource() {
+        if (datasource == null) {
+            System.out.println("if condition");
+            HikariConfig config = new HikariConfig();
 
+            config.setJdbcUrl("jdbc:mysql://localhost:3306/assignmentdb");
+            config.setUsername("root");
+            config.setPassword("root");
+            config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+
+                /*
                 config.setMaximumPoolSize(10);
                 config.setAutoCommit(false);
                 config.addDataSourceProperty("cachePrepStmts", "true");
                 config.addDataSourceProperty("prepStmtCacheSize", "250");
                 config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+                */
 
-                datasource = new HikariDataSource(config);
-            }
-            return datasource;
+            datasource = new HikariDataSource(config);
+            System.out.println(datasource);
+
         }
-
-        public static void main(String[] args)
-        {
-
-            Connection connection = null;
-            PreparedStatement pstmt = null;
-            ResultSet resultSet = null;
-            try
-            {
-                DataSource dataSource = HikariCPTest.getDataSource();
-                connection = dataSource.getConnection();
-                pstmt = connection.prepareStatement("SELECT * FROM Inventory");
-
-                System.out.println("The Connection Object is of Class: " + connection.getClass());
-
-                resultSet = pstmt.executeQuery();
-                while (resultSet.next())
-                {
-                    System.out.println(resultSet.getString(1) + "," + resultSet.getString(2) + "," + resultSet.getString(3));
-                }
-
-            }
-            catch (Exception e)
-            {
-                try
-                {
-                    connection.rollback();
-                }
-                catch (SQLException e1)
-                {
-                    e1.printStackTrace();
-                }
-                e.printStackTrace();
-            }
-        }
+        return datasource;
     }
+
+}
 
