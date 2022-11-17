@@ -1,6 +1,5 @@
 package services;
 
-import common.Credentials;
 import connpooling.HikariCPTest;
 import domain.Inventory;
 import domain.ItemCategory;
@@ -24,7 +23,7 @@ public class InventoryServiceImpl implements InventoryService{
         String credentials[] = decodedString.split(":");
         String username = credentials[0], password = credentials[1];
 
-        if (Credentials.username.equals(username) && Credentials.password.equals(password)) {
+        if (System.getenv("AUTH_USERNAME").equals(username) && System.getenv("AUTH_PASSWORD").equals(password)) {
             return true;
         }
             else {
