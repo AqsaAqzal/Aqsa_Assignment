@@ -1,7 +1,8 @@
 connpooling\HikariCPTest.class
+domain\ItemCategory.class
 resources\InventoryResource.class
 services\InventoryServiceImpl.class
-resources\InventoryResourceTest.class
 common\Credentials.class
-domain\Item.class
+domain\ItemLocation.class
+domain\Inventory.class
 services\InventoryService.class

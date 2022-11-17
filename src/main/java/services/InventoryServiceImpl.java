@@ -2,15 +2,15 @@ package services;
 
 import common.Credentials;
 import connpooling.HikariCPTest;
-import domain.Item;
-
+import domain.Inventory;
+import domain.ItemCategory;
+import domain.ItemLocation;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Base64;
 public class InventoryServiceImpl implements InventoryService{
 
-    private ArrayList<Item> itemsList = new ArrayList<Item>();
 
     /**
      * method to check if the user is authorized or not
@@ -38,32 +38,37 @@ public class InventoryServiceImpl implements InventoryService{
      * @return a list of items in result set
      * @throws SQLException
      */
-    public ArrayList<Item> executeResultSet(ResultSet rs) throws SQLException {
+    public ArrayList<Inventory> executeResultSet(ResultSet rs) throws SQLException {
+        ArrayList<Inventory> inventories = new ArrayList<Inventory>();
         while (rs.next()) {
-            Item item = new Item();
+            Inventory item = new Inventory();
+            ItemCategory itemCategory=new ItemCategory();
+            ItemLocation itemLocation = new ItemLocation();
             item.setItemId(rs.getInt("id"));
             item.setItemName(rs.getString("item_name"));
             item.setItemQuantity(rs.getInt("item_quantity"));
-            item.setItemCategoryId(rs.getInt("category_id"));
-            item.setItemLocationId(rs.getInt("location_id"));
-            itemsList.add(item);
+            itemCategory.setCategoryId(rs.getInt("item_category_id"));
+            itemCategory.setCategoryName(rs.getString("category_name"));
+            itemLocation.setLocationId(rs.getInt("item_location_id"));
+            itemLocation.setLocationName(rs.getString("location_name"));
+            item.setItemCategory(itemCategory);
+            item.setItemLocation(itemLocation);
+            inventories.add(item);
         }
-        return itemsList;
+        return inventories;
     }
-
-    /**
+    /**--
      * connects with db and inserts a new record in inventory table
      * @param item an object of item that is to be created in table as a new record
      */
 
-    public void insertNewItem(Item item) throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/assignmentdb";
-        String uname = "root";
-        String pass = "root";
-        String query = "insert into Inventory(id, item_name, item_quantity, category_id, location_id) values (?, ?, ?, ?, ?)";
+    public void insertNewItem(Inventory item) throws SQLException {
+        String query = "insert into inventory(id, item_name, item_quantity, item_category_id, item_location_id) values (?, ?, ?, ?, ?)";
 
         Connection con = null;
         PreparedStatement preparedStatement = null;
+
+        System.out.println(item.getItemCategory().getCategoryId());
 
         try {
             DataSource dataSource = HikariCPTest.getDataSource();
@@ -73,8 +78,8 @@ public class InventoryServiceImpl implements InventoryService{
             preparedStatement.setInt(1, item.getItemId());
             preparedStatement.setString(2, item.getItemName());
             preparedStatement.setInt(3, item.getItemQuantity());
-            preparedStatement.setInt(4, item.getItemCategoryId());
-            preparedStatement.setInt(5, item.getItemLocationId());
+            preparedStatement.setInt(4, item.getItemCategory().getCategoryId());
+            preparedStatement.setInt(5, item.getItemLocation().getLocationId());
             preparedStatement.executeUpdate();
 
         } catch (Exception ex) {
@@ -91,10 +96,7 @@ public class InventoryServiceImpl implements InventoryService{
      */
 
     public void removeItem(int id) throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/assignmentdb";
-        String uname = "root";
-        String pass = "root";
-        String query = "DELETE FROM Inventory WHERE id = ?";
+        String query = "DELETE FROM inventory WHERE id = ?";
 
         Connection con = null;
         PreparedStatement preparedStatement = null;
@@ -120,40 +122,27 @@ public class InventoryServiceImpl implements InventoryService{
      * @return returns an item object for the item id specified as parameter
      */
 
-    public Item readItemById(int id) throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/assignmentdb";
-        String uname = "root";
-        String pass = "root";
-        String query = "SELECT * FROM Inventory where id = ?";
+    public ArrayList<Inventory> readItemById(int id) throws SQLException {
+        String query = "SELECT i.id, i.item_name, i.item_quantity, i.item_category_id, i.item_location_id, c.category_name, l.location_name FROM inventory i, item_category c, item_location l where i.item_category_id = c.category_id && i.item_location_id = l.location_id && i.id = ?";
 
         PreparedStatement preparedStatement = null;
         Connection con = null;
         ResultSet rs = null;
+        ArrayList<Inventory> inventories = new ArrayList<Inventory>();
 
-        Item item = null;
         try {
             DataSource dataSource = HikariCPTest.getDataSource();
             con = dataSource.getConnection();
             preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, id);
             rs = preparedStatement.executeQuery();
-
-            if (rs.next()) {
-                item = new Item();
-                item.setItemId(rs.getInt("id"));
-                item.setItemName(rs.getString("item_name"));
-                item.setItemQuantity(rs.getInt("item_quantity"));
-                item.setItemCategoryId(rs.getInt("category_id"));
-                item.setItemLocationId(rs.getInt("location_id"));
-                System.out.println(item);
-            }
-
+            inventories = executeResultSet(rs);
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
             preparedStatement.close();
             con.close();
-            return item;
+            return inventories;
         }
     }
 
@@ -162,29 +151,27 @@ public class InventoryServiceImpl implements InventoryService{
      * @return returns a list of item objects whose records were present in inventory table
      */
 
-    public ArrayList<Item> readAllItems() throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/assignmentdb";
-        String uname = "root";
-        String pass = "root";
-        String query = "SELECT * FROM Inventory";
+    public ArrayList<Inventory> readAllItems() throws SQLException {
+        String query = "SELECT i.id, i.item_name, i.item_quantity, i.item_category_id, i.item_location_id, c.category_name, l.location_name FROM inventory i, item_category c, item_location l where i.item_category_id = c.category_id && i.item_location_id = l.location_id";
 
         Connection con = null;
         PreparedStatement preparedStatement = null;
         ResultSet rs = null;
+        ArrayList<Inventory> inventories = new ArrayList<Inventory>();
 
         try {
             DataSource dataSource = HikariCPTest.getDataSource();
             con = dataSource.getConnection();
             preparedStatement = con.prepareStatement(query);
             rs = preparedStatement.executeQuery();
-            itemsList = executeResultSet(rs);
+            inventories = executeResultSet(rs);
 
         } catch (Exception ex) {
             ex.getStackTrace();
         } finally {
             preparedStatement.close();
             con.close();
-            return itemsList;
+            return inventories;
         }
     }
 
@@ -193,11 +180,8 @@ public class InventoryServiceImpl implements InventoryService{
          * @param item an item objects whose values are to be updated
          */
 
-    public void updateItem(Item item) throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/assignmentdb";
-        String uname = "root";
-        String pass = "root";
-        String query = "UPDATE Inventory SET item_name = ? WHERE id = ?";
+    public void updateItem(Inventory item, int id) throws SQLException {
+        String query = "UPDATE inventory SET item_name = ?, item_quantity = ?, item_category_id = ?, item_location_id = ? WHERE id = ?";
 
         Connection con = null;
         PreparedStatement preparedStatement = null;
@@ -206,11 +190,11 @@ public class InventoryServiceImpl implements InventoryService{
             DataSource dataSource = HikariCPTest.getDataSource();
             con = dataSource.getConnection();
             preparedStatement = con.prepareStatement(query);
-            preparedStatement.setInt(2, item.getItemId());
             preparedStatement.setString(1, item.getItemName());
-           // preparedStatement.setInt(3, item.getItemQuantity());
-           // preparedStatement.setInt(4, item.getItemCategoryId());
-           // preparedStatement.setInt(5, item.getItemLocationId());
+            preparedStatement.setInt(2, item.getItemQuantity());
+            preparedStatement.setInt(3, item.getItemCategory().getCategoryId());
+            preparedStatement.setInt(4, item.getItemLocation().getLocationId());
+            preparedStatement.setInt(5, id);
             preparedStatement.executeUpdate();
 
         } catch (Exception ex) {
@@ -222,109 +206,45 @@ public class InventoryServiceImpl implements InventoryService{
     }
 
     /**
-     * connects to db and fetches record/s for a particular category that is specified
-     * @param category category id whose records are required
-     * @return returns a list of items for a specific category
-     */
-    public ArrayList<Item> readItemsByCategory(int category) throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/assignmentdb";
-        String uname = "root";
-        String pass = "root";
-        String query = "SELECT * FROM Inventory where category_id = ?";
-
-        Connection con = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet rs = null;
-
-        try {
-            DataSource dataSource = HikariCPTest.getDataSource();
-            con = dataSource.getConnection();
-            preparedStatement = con.prepareStatement(query);
-            preparedStatement.setInt(1, category);
-            rs = preparedStatement.executeQuery();
-            itemsList = executeResultSet(rs);
-
-        } catch (Exception ex) {
-            ex.getStackTrace();
-        } finally {
-            preparedStatement.close();
-            con.close();
-            return itemsList;
-        }
-    }
-
-    /**
-     * fetches record/s for a particular location that is specified
-     * @param location location id for which the records are required to be fetched
-     * @return returns a list of items for the specified location
-     */
-
-    public ArrayList<Item> readItemsByLocation(int location) throws SQLException {
-        String query = "SELECT * FROM Inventory where location_id = ?";
-
-        Connection con = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet rs = null;
-
-        try {
-            DataSource dataSource = HikariCPTest.getDataSource();
-            con = dataSource.getConnection();
-            preparedStatement = con.prepareStatement(query);
-            preparedStatement.setInt(1, location);
-            rs = preparedStatement.executeQuery();
-            itemsList = executeResultSet(rs);
-
-        }catch (Exception e)
-            {
-                try
-                {
-                    con.rollback();
-                }
-                catch (SQLException e1)
-                {
-                    e1.printStackTrace();
-                }
-                e.printStackTrace();
-            }
-        return itemsList;
-
-    }
-
-    /**
      * connects to db and fetches records for a particular category and a particular location
      * @param location location id for which the records are required
      * @param category category id for which the records are required
      * @return returns a list of items that matches a particular location and category that are specified in the parameters
      */
-    public ArrayList<Item> readItemsByLocationandCategory(int location, int category) throws SQLException {
-        String query = "SELECT * FROM Inventory where location_id = ? && category_id = ?";
-
+    public ArrayList<Inventory> readItemsByLocationandCategory(int location, int category) throws SQLException {
         Connection connection = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+        ArrayList<Inventory> inventories = new ArrayList<Inventory>();
+
         try
         {
             DataSource dataSource = HikariCPTest.getDataSource();
             connection = dataSource.getConnection();
-            pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, location);
-            pstmt.setInt(2, category);
+
+            if(category == 0) {
+                pstmt = connection.prepareStatement("select i.id, i.item_name, i.item_quantity, i.item_category_id, i.item_location_id, c.category_name, l.location_name from Inventory i, item_category c, item_location l where i.item_category_id = c.category_id && i.item_location_id = l.location_id && item_location_id = ?");
+                pstmt.setInt(1, location);
+            }
+            else if(location == 0) {
+                pstmt = connection.prepareStatement("select i.id, i.item_name, i.item_quantity, i.item_category_id, i.item_location_id, c.category_name, l.location_name from Inventory i, item_category c, item_location l where i.item_category_id = c.category_id && i.item_location_id = l.location_id && item_category_id = ?");
+                pstmt.setInt(1, category);
+            }
+            else {
+                pstmt = connection.prepareStatement("select i.id, i.item_name, i.item_quantity, i.item_category_id, i.item_location_id, c.category_name, l.location_name from Inventory i, item_category c, item_location l where i.item_category_id = c.category_id && i.item_location_id = l.location_id && item_location_id = ? && item_category_id = ?");
+                pstmt.setInt(1, location);
+                pstmt.setInt(2, category);
+            }
             rs = pstmt.executeQuery();
-            itemsList = executeResultSet(rs);
+            inventories = executeResultSet(rs);
         }
-        catch (Exception e)
-        {
-            try
-            {
-                connection.rollback();
-            }
-            catch (SQLException e1)
-            {
-                e1.printStackTrace();
-            }
-            e.printStackTrace();
+        catch (Exception ex) {
+            ex.getStackTrace();
+        } finally {
+            pstmt.close();
+            connection.close();
+            return inventories;
         }
-        return itemsList;
     }
 }
 

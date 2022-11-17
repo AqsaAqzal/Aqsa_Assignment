@@ -15,19 +15,18 @@ public class HikariCPTest {
 
     public static DataSource getDataSource() {
         if (datasource == null) {
-            System.out.println("if condition");
             HikariConfig config = new HikariConfig();
 
-            config.setJdbcUrl("jdbc:mysql://localhost:3306/assignmentdb");
-            config.setUsername("root");
-            config.setPassword("root");
+            config.setJdbcUrl(System.getenv("CON_URL"));
+            config.setUsername(System.getenv("CON_USERNAME"));
+            config.setPassword(System.getenv("CON_PASSWORD"));
             config.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
                 /*
                 config.setMaximumPoolSize(10);
                 config.setAutoCommit(false);
                 config.addDataSourceProperty("cachePrepStmts", "true");
-                config.addDataSourceProperty("prepStmtCacheSize", "250");
+                config.addDataSourceProperty("prepStmtCacheSize", "250");=
                 config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
                 */
 

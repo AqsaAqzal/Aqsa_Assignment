@@ -5,7 +5,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
-import domain.Item;
+import domain.Inventory;
 import services.InventoryService;
 import services.InventoryServiceImpl;
 import java.sql.SQLException;
@@ -13,10 +13,8 @@ import java.util.ArrayList;
 @Path("/inventory")
 public class InventoryResource {
 
-    private Item item = new Item();
-    private Gson obj = new Gson();
-    private InventoryService is = new InventoryServiceImpl();
-    private ArrayList<Item> items = new ArrayList<Item>();
+    private Gson jsonObj = new Gson();
+    private InventoryService inventoryService = new InventoryServiceImpl();
 
     /***
      * adds a new record of item in Inventory table
@@ -26,14 +24,14 @@ public class InventoryResource {
      */
     @POST
     @Path("/add")
-    public Response addItem(@Context ContainerRequestContext request, String payload) throws SQLException {
+    public Response addNewInventoryItem(@Context ContainerRequestContext request, String payload) throws SQLException {
+        Inventory inventory = new Inventory();
         String authHeader = request.getHeaders().getFirst("authorization");
-        item = obj.fromJson(payload, Item.class);
-        if(is.isAuthorized(authHeader)) {
-            is.insertNewItem(item);
-            return Response.status(200).build();
+        inventory = jsonObj.fromJson(payload, Inventory.class);
+       if(inventoryService.isAuthorized(authHeader)) {
+            inventoryService.insertNewItem(inventory);
+            return Response.ok(payload).build();
         } else {
-            System.out.println("failed");
             return Response.status(401).entity("Unauthorized").build();
         }
     }
@@ -45,14 +43,13 @@ public class InventoryResource {
      * @throws SQLException
      */
     @DELETE
-    @Path("/delete/{id}")
-    public Response deleteItem(@Context ContainerRequestContext request, @PathParam("id") int id) throws SQLException {
+    @Path("/{inventory_id}")
+    public Response deleteExistingInventoryItem(@Context ContainerRequestContext request, @PathParam("inventory_id") int id) throws SQLException {
         String authHeader = request.getHeaders().getFirst("authorization");
-        if(is.isAuthorized(authHeader)) {
-        is.removeItem(id);
-            return Response.status(200).build();
+        if(inventoryService.isAuthorized(authHeader)) {
+        inventoryService.removeItem(id);
+            return Response.ok("OK").build();
         } else {
-            System.out.println("failed");
             return Response.status(401).entity("Unauthorized").build();
         }
     }
@@ -64,15 +61,15 @@ public class InventoryResource {
      * @throws SQLException
      */
     @GET
-    @Path("/getById/{id}")
-    public Response  getItemById(@Context ContainerRequestContext request, @PathParam("id") int id) throws SQLException {
+    @Path("/{inventory_id}")
+    public Response fetchInventoryItemById(@Context ContainerRequestContext request, @PathParam("inventory_id") int id) throws SQLException {
         String authHeader = request.getHeaders().getFirst("authorization");
-        if(is.isAuthorized(authHeader)) {
-        Item itemData = is.readItemById(id);
-        String itemJson = obj.toJson(itemData, Item.class);
-            return Response.status(200).entity(itemJson).build();
+        ArrayList<Inventory> inventoryList = new ArrayList<Inventory>();
+        if(inventoryService.isAuthorized(authHeader)) {
+        inventoryList = inventoryService.readItemById(id);
+        String response = jsonObj.toJson(inventoryList);
+            return Response.status(200).entity(response).build();
         } else {
-            System.out.println("failed");
             return Response.status(401).entity("Unauthorized").build();
         }
     }
@@ -83,16 +80,14 @@ public class InventoryResource {
      * @throws SQLException
      */
     @GET
-    @Path("/getAll")
-    public Response getAllItems(@Context ContainerRequestContext request) throws SQLException {
+    @Path("/list")
+    public Response fetchAllInventoryItems(@Context ContainerRequestContext request) throws SQLException {
         String authHeader = request.getHeaders().getFirst("authorization");
-        if (is.isAuthorized(authHeader)) {
-            System.out.println("authorized");
-            items = is.readAllItems();
-            String itemsJson = obj.toJson(items);
-            return Response.status(200).entity(itemsJson).build();
+        if (inventoryService.isAuthorized(authHeader)) {
+            ArrayList<Inventory> inventoryList = inventoryService.readAllItems();
+            String response = jsonObj.toJson(inventoryList);
+            return Response.status(200).entity(response).build();
         } else {
-            System.out.println("failed");
             return Response.status(401).entity("Unauthorized").build();
         }
     }
@@ -104,55 +99,15 @@ public class InventoryResource {
      * @throws SQLException
      */
     @PUT
-    @Path("/update")
-    public Response updateItem(@Context ContainerRequestContext request, String payload) throws SQLException {
+    @Path("/{inventory_id}")
+    public Response updateExistingInventoryItem(@Context ContainerRequestContext request, String payload, @PathParam("inventory_id") int id) throws SQLException {
         String authHeader = request.getHeaders().getFirst("authorization");
-        item = obj.fromJson(payload, Item.class);
-        if(is.isAuthorized(authHeader)) {
-            is.updateItem(item);
-            return Response.status(200).build();
+        Inventory inventory = new Inventory();
+        inventory = jsonObj.fromJson(payload, Inventory.class);
+        if(inventoryService.isAuthorized(authHeader)) {
+            inventoryService.updateItem(inventory, id);
+            return Response.ok(payload).build();
         } else {
-            System.out.println("failed");
-            return Response.status(401).entity("Unauthorized").build();
-        }
-    }
-
-    /**
-     *reads record/s on the basis of category id and returns it as response
-     * @param category category id on the basis of which records are to be fetched
-     * @return returns a list of items of a specific category in the form of json
-     * @throws SQLException
-     */
-    @GET
-    @Path("/getByCategory/{category}")
-    public Response  getItemsByCategory(@Context ContainerRequestContext request, @PathParam("category") int category) throws SQLException {
-        String authHeader = request.getHeaders().getFirst("authorization");
-        if(is.isAuthorized(authHeader)) {
-        items = is.readItemsByCategory(category);
-        String str = obj.toJson(items);
-            return Response.status(200).entity(str).build();
-        } else {
-            System.out.println("failed");
-            return Response.status(401).entity("Unauthorized").build();
-        }
-    }
-
-    /**
-     *reads record/s on the basis of location id and returns it as response
-     * @param location location id on the basis of which records are to be fetched
-     * @return returns a list of items of a specific location in the form of json
-     * @throws SQLException
-     */
-    @GET
-    @Path("/getByLocation/{location}")
-    public Response  getItemsByLocation(@Context ContainerRequestContext request, @PathParam("location") int location) throws SQLException {
-        String authHeader = request.getHeaders().getFirst("authorization");
-        if(is.isAuthorized(authHeader)) {
-        items = is.readItemsByLocation(location);
-        String str = obj.toJson(items);
-            return Response.status(200).entity(str).build();
-        } else {
-            System.out.println("failed");
             return Response.status(401).entity("Unauthorized").build();
         }
     }
@@ -163,15 +118,17 @@ public class InventoryResource {
      * @param category category id on the basis of which records are to be fetched
      * @return returns a list of items of a specific location and category in the form of json
      * @throws SQLException
-     */
+     * */
+
     @GET
-    @Path("/getByLocationandCategory/{location}/{category}")
-    public Response  getItemsByLocationAndCategory(@Context ContainerRequestContext request, @PathParam("location") int location, @PathParam("category") int category) throws SQLException {
+    @Path("/list/categoryAndLocation")
+    public Response  fetchAllInventoryItemsByLocationAndCategory(@Context ContainerRequestContext request, @QueryParam("category") int category, @QueryParam("location") int location) throws SQLException {
         String authHeader = request.getHeaders().getFirst("authorization");
-        if(is.isAuthorized(authHeader)) {
-        items = is.readItemsByLocationandCategory(location, category);
-        String str = obj.toJson(items);
-            return Response.status(200).entity(str).build();
+        ArrayList<Inventory> inventoryList = new ArrayList<Inventory>();
+        if(inventoryService.isAuthorized(authHeader)) {
+        inventoryList = inventoryService.readItemsByLocationandCategory(location, category);
+        String response = jsonObj.toJson(inventoryList);
+            return Response.status(200).entity(response).build();
         } else {
             return Response.status(401).entity("Unauthorized").build();
         }
