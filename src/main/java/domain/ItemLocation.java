@@ -4,26 +4,26 @@ import com.google.gson.annotations.SerializedName;
 
 public class ItemLocation {
 
-    @SerializedName(value = "locationId")
-    private int locationId;
+    @SerializedName(value = "id")
+    private int id;
 
-    @SerializedName(value = "locationName")
-    private String locationName;
+    @SerializedName(value = "location_name")
+    private String location_name;
 
-    public int getLocationId() {
-        return locationId;
+    public int getId() {
+        return id;
     }
 
-    public void setLocationId(int locationId) {
-        this.locationId = locationId;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getLocationName() {
-        return locationName;
+    public String getLocation_name() {
+        return location_name;
     }
 
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
+    public void setLocation_name(String location_name) {
+        this.location_name = location_name;
     }
 
 }

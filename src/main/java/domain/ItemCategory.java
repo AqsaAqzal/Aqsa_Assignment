@@ -4,25 +4,25 @@ import com.google.gson.annotations.SerializedName;
 
 public class ItemCategory {
 
-    @SerializedName(value = "categoryId")
-    private int categoryId;
+    @SerializedName(value = "id")
+    private int id;
 
-    @SerializedName(value = "categoryName")
-    private String categoryName;
+    @SerializedName(value = "category_name")
+    private String category_name;
 
-    public int getCategoryId() {
-        return categoryId;
+    public int getId() {
+        return id;
     }
 
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getCategoryName() {
-        return categoryName;
+    public String getCategory_name() {
+        return category_name;
     }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
+    public void setCategory_name(String category_name) {
+        this.category_name = category_name;
     }
 }
