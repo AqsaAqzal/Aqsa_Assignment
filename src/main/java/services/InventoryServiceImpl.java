@@ -36,7 +36,7 @@ public class InventoryServiceImpl implements InventoryService{
     // todo change this to return only single inventory object - move while loop to place where this function is being called
     public Inventory executeResultSet(ResultSet rs) throws SQLException {
         Inventory inventory = new Inventory();
-        if (rs.next()) {
+
             ItemCategory itemCategory=new ItemCategory();
             ItemLocation itemLocation = new ItemLocation();
             inventory.setId(rs.getInt("id"));
@@ -48,7 +48,7 @@ public class InventoryServiceImpl implements InventoryService{
             itemLocation.setLocation_name(rs.getString("location_name"));
             inventory.setItem_category(itemCategory);
             inventory.setItem_location(itemLocation);
-        }
+
         return inventory;
     }
 
@@ -131,7 +131,9 @@ public class InventoryServiceImpl implements InventoryService{
             preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, id);
             rs = preparedStatement.executeQuery();
-            inventory = executeResultSet(rs);
+            if(rs.next()) {
+                inventory = executeResultSet(rs);
+            }
         } finally {
             preparedStatement.close();
             con.close();
@@ -151,7 +153,6 @@ public class InventoryServiceImpl implements InventoryService{
         ResultSet rs = null;
         ArrayList<Inventory> inventories = new ArrayList<Inventory>();
         Inventory inventory = new Inventory();
-
 
         try
         {
