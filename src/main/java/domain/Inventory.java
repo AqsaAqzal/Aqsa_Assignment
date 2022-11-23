@@ -2,16 +2,18 @@ package domain;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.ws.rs.BadRequestException;
+
 public class Inventory {
-    //todo change fields name as per assignment
     @SerializedName(value = "id")
-    private int id;
+    private Integer id;
+    //todo treat as class not primitive
 
     @SerializedName(value = "item_name")
     private String item_name;
 
     @SerializedName(value = "item_quantity")
-    private int item_quantity;
+    private Integer item_quantity;
 
     @SerializedName(value = "item_category")
     private ItemCategory item_category;
@@ -35,7 +37,7 @@ public class Inventory {
         this.item_category = item_category;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -51,7 +53,7 @@ public class Inventory {
         this.item_name = item_name;
     }
 
-    public int getItem_quantity() {
+    public Integer getItem_quantity() {
         return item_quantity;
     }
 
@@ -59,4 +61,18 @@ public class Inventory {
         this.item_quantity = item_quantity;
     }
 
+    public  static void validate(Inventory item) {
+        if(item.getItem_name() == null) {
+            throw new BadRequestException("Item name field is null");
+        }
+        if(item.getItem_quantity() == null) {
+            throw new BadRequestException("Item quantity field is null");
+        }
+        if(item.getItem_category() == null) {
+            throw new BadRequestException("Item category field is null");
+        }
+        if(item.getItem_location() == null) {
+            throw new BadRequestException("Item location field is null");
+        }
+    }
 }

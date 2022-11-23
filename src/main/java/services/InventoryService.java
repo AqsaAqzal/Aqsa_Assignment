@@ -9,11 +9,11 @@ public interface InventoryService {
 
     void insertNewInventoryItem(Inventory item) throws SQLException;
 
-    void removeExistingInventoryItem(int id) throws SQLException;
+    void removeExistingInventoryItem(Integer id) throws SQLException, ClassNotFoundException;
 
     Inventory readInventoryItemById(int id) throws SQLException;
 
-    void updateExistingInventoryItem(Inventory item, int id) throws SQLException;
+    void updateExistingInventoryItem(Inventory item) throws SQLException;
 
-    ArrayList<Inventory> readAllInventoryItems(int location, int category) throws SQLException;
+    ArrayList<Inventory> readAllInventoryItems(Integer location, Integer category) throws SQLException;
 }

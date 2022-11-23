@@ -6,6 +6,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
 import domain.Inventory;
+import domain.ErrorResponse;
 import services.InventoryService;
 import services.InventoryServiceImpl;
 import java.util.ArrayList;
@@ -14,28 +15,31 @@ public class InventoryResource {
 
     private final Gson jsonObj = new Gson();
     private final InventoryService inventoryService = new InventoryServiceImpl();
-    Inventory inventory = new Inventory();
-    ArrayList<Inventory> inventoryList = new ArrayList<Inventory>();
-
     /***
      * adds a new record of item in Inventory table
      * @param payload contains the properties of an item in json format
      * @return the method returns response with status 200 after successfully adding a new record in table
      */
     @POST
-    public Response addNewInventoryItem(@Context ContainerRequestContext request, String payload) { //todo handle exception in catch block
+    public Response addNewInventoryItem(@Context ContainerRequestContext request, String payload) {
         String authHeader = request.getHeaders().getFirst("authorization");
+        Inventory inventory = new Inventory();
         inventory = jsonObj.fromJson(payload, Inventory.class);
-       if(!inventoryService.isAuthorized(authHeader)) {
-           return Response.status(401).entity("Unauthorized").build();//todo move authorization above
+         if(!inventoryService.isAuthorized(authHeader)) {
+           return Response.status(401).entity("Unauthorized").build();
         }
        try {
            inventoryService.insertNewInventoryItem(inventory);
        }
-       catch (Exception ex) {
-           return Response.status(500).entity("Internal Server Error").build();
+       catch (BadRequestException badRequestException) {
+           ErrorResponse errorResponse = new ErrorResponse(badRequestException.getMessage());
+           return  Response.status(400).entity(jsonObj.toJson(errorResponse)).build();
        }
-        return Response.ok(payload).build();
+       catch (Exception ex) {
+           ErrorResponse errorResponse = new ErrorResponse("Internal Server Error");
+           return Response.status(500).entity(jsonObj.toJson(errorResponse)).build();
+       }
+        return Response.ok(jsonObj.toJson(inventory)).build();
     }
 
     /**
@@ -47,17 +51,25 @@ public class InventoryResource {
     @Path("/{inventory_id}")
     public Response updateExistingInventoryItem(@Context ContainerRequestContext request, String payload, @PathParam("inventory_id") int id) {
         String authHeader = request.getHeaders().getFirst("authorization");
+        Inventory inventory = new Inventory();
         inventory = jsonObj.fromJson(payload, Inventory.class);
+        inventory.setId(id);
         if(!inventoryService.isAuthorized(authHeader)) {
             return Response.status(401).entity("Unauthorized").build();
         }
         try {
-            inventoryService.updateExistingInventoryItem(inventory, id);
+            inventoryService.updateExistingInventoryItem(inventory);
+        }
+        catch (BadRequestException badRequestException) {
+            ErrorResponse errorResponse = new ErrorResponse(badRequestException.getMessage());
+            errorResponse.setError_message(badRequestException.getMessage());
+            return  Response.status(400).entity(jsonObj.toJson(errorResponse)).build();
         }
         catch (Exception ex) {
-            return Response.status(500).entity("Internal Server Error").build();
+            ErrorResponse errorResponse = new ErrorResponse("Internal Server Error");
+            return Response.status(500).entity(jsonObj.toJson(errorResponse)).build();
         }
-        return Response.ok(payload).build();
+        return Response.ok(jsonObj.toJson(inventory)).build();
     }
 
     /**
@@ -69,6 +81,7 @@ public class InventoryResource {
     @Path("/{inventory_id}")
     public Response fetchInventoryItemById(@Context ContainerRequestContext request, @PathParam("inventory_id") int id) {
         String authHeader = request.getHeaders().getFirst("authorization");
+        Inventory inventory = new Inventory();
         if(!inventoryService.isAuthorized(authHeader)) {
             return Response.status(401).entity("Unauthorized").build();
         }
@@ -76,7 +89,8 @@ public class InventoryResource {
             inventory = inventoryService.readInventoryItemById(id);
         }
         catch (Exception ex) {
-            return Response.status(500).entity("Internal Server Error").build();
+            ErrorResponse errorResponse = new ErrorResponse("Internal Server Error");
+            return Response.status(500).entity(jsonObj.toJson(errorResponse)).build();
         }
         String response = jsonObj.toJson(inventory);
         return Response.status(200).entity(response).build();
@@ -89,11 +103,11 @@ public class InventoryResource {
      * @return returns a list of items of a specific location and category in the form of json
      * */
 
-    //todo remove this API and move query params to /list API
     @GET
     @Path("/list")
-    public Response fetchAllInventoryItems(@Context ContainerRequestContext request, @QueryParam("category") int category, @QueryParam("location") int location) {
+    public Response fetchAllInventoryItems(@Context ContainerRequestContext request, @QueryParam("category") Integer category, @QueryParam("location") Integer location) {
         String authHeader = request.getHeaders().getFirst("authorization");
+        ArrayList<Inventory> inventoryList = new ArrayList<Inventory>();
         if(!inventoryService.isAuthorized(authHeader)) {
             return Response.status(401).entity("Unauthorized").build();
         }
@@ -101,7 +115,9 @@ public class InventoryResource {
             inventoryList = inventoryService.readAllInventoryItems(location, category);
         }
         catch (Exception ex) {
-            return Response.status(500).entity("Internal Server Error").build();
+            ErrorResponse errorResponse = new ErrorResponse("Internal Server Error");
+            return Response.status(500).entity(jsonObj.toJson(errorResponse)).build();
+            // todo handle error response as per assignment - create new Error class
         }
         String response = jsonObj.toJson(inventoryList);
         return Response.status(200).entity(response).build();
@@ -114,7 +130,7 @@ public class InventoryResource {
      */
     @DELETE
     @Path("/{inventory_id}")
-    public Response deleteExistingInventoryItem(@Context ContainerRequestContext request, @PathParam("inventory_id") int id) {
+    public Response deleteExistingInventoryItem(@Context ContainerRequestContext request, @PathParam("inventory_id") Integer id) {
         String authHeader = request.getHeaders().getFirst("authorization");
         if(!inventoryService.isAuthorized(authHeader)) {
             return Response.status(401).entity("Unauthorized").build();
@@ -123,7 +139,8 @@ public class InventoryResource {
             inventoryService.removeExistingInventoryItem(id);
         }
         catch (Exception ex) {
-            return Response.status(500).entity("Internal Server Error").build();
+            ErrorResponse errorResponse = new ErrorResponse("Internal Server Error");
+            return Response.status(500).entity(jsonObj.toJson(errorResponse)).build();
         }
         return Response.ok("OK").build();
     }

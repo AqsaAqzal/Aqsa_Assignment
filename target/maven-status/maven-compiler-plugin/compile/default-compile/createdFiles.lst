@@ -1,7 +1,8 @@
+domain\ErrorResponse.class
 domain\ItemCategory.class
 resources\InventoryResource.class
-common\AuthCredentials.class
 services\InventoryServiceImpl.class
+common\Constants.class
 domain\ItemLocation.class
 domain\Inventory.class
 services\InventoryService.class

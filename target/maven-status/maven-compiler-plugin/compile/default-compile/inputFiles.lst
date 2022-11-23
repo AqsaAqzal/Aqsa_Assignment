@@ -3,6 +3,7 @@ C:\Users\HotelKey\IdeaProjects\Aqsa_Assignment\src\main\java\domain\ItemCategory
 C:\Users\HotelKey\IdeaProjects\Aqsa_Assignment\src\main\java\resources\InventoryResource.java
 C:\Users\HotelKey\IdeaProjects\Aqsa_Assignment\src\main\java\connpooling\HikariCP.java
 C:\Users\HotelKey\IdeaProjects\Aqsa_Assignment\src\main\java\domain\ItemLocation.java
-C:\Users\HotelKey\IdeaProjects\Aqsa_Assignment\src\main\java\common\AuthCredentials.java
+C:\Users\HotelKey\IdeaProjects\Aqsa_Assignment\src\main\java\common\Constants.java
+C:\Users\HotelKey\IdeaProjects\Aqsa_Assignment\src\main\java\domain\ErrorResponse.java
 C:\Users\HotelKey\IdeaProjects\Aqsa_Assignment\src\main\java\services\InventoryServiceImpl.java
 C:\Users\HotelKey\IdeaProjects\Aqsa_Assignment\src\main\java\services\InventoryService.java

@@ -66,6 +66,7 @@ public class InventoryResourceTest {
             ex.getStackTrace();
         }
     }
+
     /**
      * junit for getting the record of an item with id=3
      */
