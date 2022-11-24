@@ -3,7 +3,9 @@ domain\ItemCategory.class
 resources\InventoryResource.class
 services\InventoryServiceImpl.class
 common\Constants.class
+domain\User.class
 domain\ItemLocation.class
 domain\Inventory.class
+util\ApplicationClass.class
 services\InventoryService.class
 connpooling\HikariCP.class

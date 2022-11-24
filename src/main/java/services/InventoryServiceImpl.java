@@ -1,14 +1,16 @@
 package services;
 
-import common.Constants;
 import connpooling.HikariCP;
 import domain.Inventory;
 import domain.ItemCategory;
 import domain.ItemLocation;
+import domain.User;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Base64;
+import util.ApplicationClass;
+
 
 public class InventoryServiceImpl implements InventoryService {
 
@@ -24,7 +26,17 @@ public class InventoryServiceImpl implements InventoryService {
         String credentials[] = decodedString.split(":");
         String username = credentials[0], password = credentials[1];
 
-        return Constants.authUsername.equals(username) && Constants.authPassword.equals(password);
+        boolean authCheck = false;
+        ArrayList<User> usersList = new ArrayList<User>();
+        usersList = ApplicationClass.getUsersList();
+
+
+            for(User users : usersList) {
+              if(users.getUsername().equals(username) && users.getPassword().equals(password)) {
+                    authCheck = true;
+                }
+            }
+        return authCheck;
     }
 
     /**
