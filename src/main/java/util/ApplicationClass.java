@@ -1,8 +1,6 @@
 package util;
 import connpooling.HikariCP;
 import domain.User;
-
-import javax.servlet.http.HttpServlet;
 import javax.sql.DataSource;
 import javax.ws.rs.core.Application;
 import java.sql.Connection;
@@ -18,10 +16,6 @@ public class ApplicationClass extends Application {
         return usersList;
     }
 
-    public static void setUsersList(ArrayList<User> usersList) {
-        ApplicationClass.usersList = usersList;
-    }
-
     public ApplicationClass() {
         try {
             loadUsersFromDb();
@@ -35,7 +29,6 @@ public class ApplicationClass extends Application {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet rs = null;
-        boolean authCheck = false;
 
         String query = "select * from user";
 
@@ -53,6 +46,9 @@ public class ApplicationClass extends Application {
             }
 
         }finally {
+            if (rs != null) {
+                rs.close();
+            }
             if (preparedStatement != null) {
                 preparedStatement.close();
             }

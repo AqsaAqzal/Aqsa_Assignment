@@ -5,10 +5,12 @@ import domain.Inventory;
 import domain.ItemCategory;
 import domain.ItemLocation;
 import domain.User;
+
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Base64;
+
 import util.ApplicationClass;
 
 
@@ -16,14 +18,15 @@ public class InventoryServiceImpl implements InventoryService {
 
     /**
      * method to check if the user is authorized or not
+     *
      * @param authHeader auth details provided by client hitting the api
      * @return returns true if user is authorized else returns false
      */
     public boolean isAuthorized(String authHeader) {
-        String headerDetails[] = authHeader.split(" ");
+        String[] headerDetails = authHeader.split(" ");
         byte[] decodedBytes = Base64.getDecoder().decode(headerDetails[1]);
         String decodedString = new String(decodedBytes);
-        String credentials[] = decodedString.split(":");
+        String[] credentials = decodedString.split(":");
         String username = credentials[0], password = credentials[1];
 
         boolean authCheck = false;
@@ -31,11 +34,11 @@ public class InventoryServiceImpl implements InventoryService {
         usersList = ApplicationClass.getUsersList();
 
 
-            for(User users : usersList) {
-              if(users.getUsername().equals(username) && users.getPassword().equals(password)) {
-                    authCheck = true;
-                }
+        for (User users : usersList) {
+            if (users.getUsername().equals(username) && users.getPassword().equals(password)) {
+                authCheck = true;
             }
+        }
         return authCheck;
     }
 
@@ -72,8 +75,6 @@ public class InventoryServiceImpl implements InventoryService {
      * @param item an object of item that is to be created in table as a new record
      */
     public void insertNewInventoryItem(Inventory item) throws SQLException { //todo handle inventory validation, throw bad request if any validation failed and catch it separately in resource
-        String query = "insert into inventory(item_name, item_quantity, item_category_id, item_location_id) values (?, ?, ?, ?)";
-
         Inventory.validate(item);
         Connection con = null;
         PreparedStatement preparedStatement = null;
@@ -81,14 +82,14 @@ public class InventoryServiceImpl implements InventoryService {
         try {
             DataSource dataSource = HikariCP.getDataSource();
             con = dataSource.getConnection();
-            preparedStatement = con.prepareStatement(query);
-       //     preparedStatement.setInt(1, item.getId());
+            preparedStatement = con.prepareStatement(InventorySQL.ADD_INVENTORY);
+            //     preparedStatement.setInt(1, item.getId());
             preparedStatement.setString(1, item.getItem_name());
             preparedStatement.setInt(2, item.getItem_quantity());
             preparedStatement.setInt(3, item.getItem_category().getId());
             preparedStatement.setInt(4, item.getItem_location().getId());
             preparedStatement.executeUpdate();
-        }finally {
+        } finally {
             if (preparedStatement != null) {
                 preparedStatement.close();
             }
@@ -105,17 +106,14 @@ public class InventoryServiceImpl implements InventoryService {
      */
 
     public void updateExistingInventoryItem(Inventory item) throws SQLException {
-        String query = "UPDATE inventory SET item_name = ?, item_quantity = ?, item_category_id = ?, item_location_id = ? WHERE id = ?";
-
         Connection con = null;
         PreparedStatement preparedStatement = null;
-
         Inventory.validate(item);
 
         try {
             DataSource dataSource = HikariCP.getDataSource();
             con = dataSource.getConnection();
-            preparedStatement = con.prepareStatement(query);
+            preparedStatement = con.prepareStatement(InventorySQL.UPDATE_INVENTORY);
             preparedStatement.setString(1, item.getItem_name());
             preparedStatement.setInt(2, item.getItem_quantity());
             preparedStatement.setInt(3, item.getItem_category().getId());
@@ -144,7 +142,6 @@ public class InventoryServiceImpl implements InventoryService {
      */
 
     public Inventory readInventoryItemById(int id) throws SQLException {
-        String query = "SELECT i.*, c.*, l.*  FROM inventory i, item_category c, item_location l where i.item_category_id = c.id && i.item_location_id = l.id && i.id = ?";
         PreparedStatement preparedStatement = null;
         Connection con = null;
         ResultSet rs = null;
@@ -153,13 +150,16 @@ public class InventoryServiceImpl implements InventoryService {
         try {
             DataSource dataSource = HikariCP.getDataSource();
             con = dataSource.getConnection();
-            preparedStatement = con.prepareStatement(query);
+            preparedStatement = con.prepareStatement(InventorySQL.FETCH_BY_ID);
             preparedStatement.setInt(1, id);
             rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 inventory = executeResultSet(rs);
             }
         } finally {
+            if (rs != null) {
+                rs.close();
+            }
             if (preparedStatement != null) {
                 preparedStatement.close();
             }
@@ -190,15 +190,15 @@ public class InventoryServiceImpl implements InventoryService {
 
             // todo compare with null not zero
             if (category == null && location == null) {
-                preparedStatement = connection.prepareStatement("SELECT i.*, c.*, l.* FROM inventory i, item_category c, item_location l where i.item_category_id = c.id && i.item_location_id = l.id");
+                preparedStatement = connection.prepareStatement(InventorySQL.FETCH_ALL_INVENTORIES);
             } else if (category == null) {
-                preparedStatement = connection.prepareStatement("select i.*, c.*, l.* from Inventory i, item_category c, item_location l where i.item_category_id = c.id && i.item_location_id = l.id && item_location_id = ?");
+                preparedStatement = connection.prepareStatement(InventorySQL.FETCH_BY_LOCATION);
                 preparedStatement.setInt(1, location);
             } else if (location == null) {
-                preparedStatement = connection.prepareStatement("select i.*, c.*, l.* from Inventory i, item_category c, item_location l where i.item_category_id = c.id && i.item_location_id = l.id && item_category_id = ?");
+                preparedStatement = connection.prepareStatement(InventorySQL.FETCH_BY_CATEGORY);
                 preparedStatement.setInt(1, category);
             } else {
-                preparedStatement = connection.prepareStatement("select i.*, c.*, l.* from Inventory i, item_category c, item_location l where i.item_category_id = c.id && i.item_location_id = l.id && item_location_id = ? && item_category_id = ?");
+                preparedStatement = connection.prepareStatement(InventorySQL.FETCH_BY_CATEGORY_AND_LOCATION);
                 preparedStatement.setInt(1, location);
                 preparedStatement.setInt(2, category);
             }
@@ -208,7 +208,10 @@ public class InventoryServiceImpl implements InventoryService {
                 inventory = executeResultSet(rs);
                 inventories.add(inventory);
             }
-        }  finally {
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
             if (preparedStatement != null) {
                 preparedStatement.close(); //todo remove warnings
             }
@@ -226,14 +229,12 @@ public class InventoryServiceImpl implements InventoryService {
      */
 
     public void removeExistingInventoryItem(Integer id) throws SQLException {
-        String query = "DELETE FROM inventory WHERE id = ?";
-
         Connection con = null;
         PreparedStatement preparedStatement = null;
         try {
             DataSource dataSource = HikariCP.getDataSource();
             con = dataSource.getConnection();
-            preparedStatement = con.prepareStatement(query);
+            preparedStatement = con.prepareStatement(InventorySQL.DELETE_INVENTORY);
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
         } finally {

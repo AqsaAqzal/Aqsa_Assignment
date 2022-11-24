@@ -1,4 +1,5 @@
 domain\ErrorResponse.class
+services\InventorySQL.class
 domain\ItemCategory.class
 resources\InventoryResource.class
 services\InventoryServiceImpl.class
