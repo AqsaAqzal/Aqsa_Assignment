@@ -16,12 +16,11 @@ public class HikariCP {
         if (datasource == null) {
             HikariConfig config = new HikariConfig();
 
-            config.setJdbcUrl(Constants.conUrl); // todo create constants
+            config.setJdbcUrl(Constants.conUrl);
             config.setUsername(Constants.conUsername);
             config.setPassword(Constants.conPassword);
             config.setDriverClassName("com.mysql.cj.jdbc.Driver");
             config.setMaximumPoolSize(5);
-            //todo configure connection pool
 
             datasource = new HikariDataSource(config);
         }

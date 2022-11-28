@@ -5,12 +5,10 @@ import domain.Inventory;
 import domain.ItemCategory;
 import domain.ItemLocation;
 import domain.User;
-
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Base64;
-
 import util.ApplicationClass;
 
 
@@ -52,7 +50,6 @@ public class InventoryServiceImpl implements InventoryService {
 
     public Inventory executeResultSet(ResultSet rs) throws SQLException {
         Inventory inventory = new Inventory();
-        //todo use alias in result set
         ItemCategory itemCategory = new ItemCategory();
         ItemLocation itemLocation = new ItemLocation();
         inventory.setId(rs.getInt("i.id"));
@@ -64,7 +61,6 @@ public class InventoryServiceImpl implements InventoryService {
         itemLocation.setLocation_name(rs.getString("l.location_name"));
         inventory.setItem_category(itemCategory);
         inventory.setItem_location(itemLocation);
-
         return inventory;
     }
 
@@ -120,9 +116,6 @@ public class InventoryServiceImpl implements InventoryService {
             preparedStatement.setInt(4, item.getItem_location().getId());
             preparedStatement.setInt(5, item.getId());
             preparedStatement.executeUpdate();
-
-        } catch (Exception ex) {
-            ex.getStackTrace();
         } finally {
             if (preparedStatement != null) {
                 preparedStatement.close();

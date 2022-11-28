@@ -7,7 +7,6 @@ import javax.ws.rs.BadRequestException;
 public class Inventory {
     @SerializedName(value = "id")
     private Integer id;
-    //todo treat as class not primitive
 
     @SerializedName(value = "item_name")
     private String item_name;

@@ -10,9 +10,7 @@ import domain.Inventory;
 import domain.ErrorResponse;
 import services.InventoryService;
 import services.InventoryServiceImpl;
-
 import java.util.ArrayList;
-
 @Path("/inventory")
 public class InventoryResource {
 
@@ -120,7 +118,6 @@ public class InventoryResource {
         } catch (Exception ex) {
             ErrorResponse errorResponse = new ErrorResponse("Internal Server Error");
             return Response.status(500).entity(jsonObj.toJson(errorResponse)).build();
-            // todo handle error response as per assignment - create new Error class
         }
         String response = jsonObj.toJson(inventoryList);
         return Response.status(200).entity(response).build();

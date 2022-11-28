@@ -3,7 +3,6 @@ package domain;
 import com.google.gson.annotations.SerializedName;
 
 public class ItemLocation {
-
     @SerializedName(value = "id")
     private int id;
 
@@ -25,5 +24,4 @@ public class ItemLocation {
     public void setLocation_name(String location_name) {
         this.location_name = location_name;
     }
-
 }

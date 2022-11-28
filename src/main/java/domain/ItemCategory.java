@@ -3,7 +3,6 @@ package domain;
 import com.google.gson.annotations.SerializedName;
 
 public class ItemCategory {
-
     @SerializedName(value = "id")
     private int id;
 

@@ -58,5 +58,4 @@ public class ApplicationClass extends Application {
         }
         return usersList;
     }
-
 }
