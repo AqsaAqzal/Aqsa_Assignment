@@ -7,15 +7,13 @@ import java.util.ArrayList;
 public interface InventoryService {
     boolean isAuthorized(String authHeader);
 
-    void insertNewItem(Inventory item) throws SQLException;
+    void insertNewInventoryItem(Inventory item) throws SQLException;
 
-    void removeItem(int id) throws SQLException;
+    void removeExistingInventoryItem(Integer id) throws SQLException, ClassNotFoundException;
 
-    ArrayList<Inventory> readItemById(int id) throws SQLException;
+    Inventory readInventoryItemById(int id) throws SQLException;
 
-    ArrayList<Inventory> readAllItems() throws SQLException;
+    void updateExistingInventoryItem(Inventory item) throws SQLException;
 
-    void updateItem(Inventory item, int id) throws SQLException;
-
-    ArrayList<Inventory> readItemsByLocationandCategory(int location, int category) throws SQLException;
+    ArrayList<Inventory> readAllInventoryItems(Integer location, Integer category) throws SQLException;
 }
