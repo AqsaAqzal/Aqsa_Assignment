@@ -18,4 +18,6 @@ abstract public class InventorySQL {
 
     public static final String DELETE_INVENTORY = "DELETE FROM inventory WHERE id = ?";
 
+    public static final String USERS_LIST = "select * from user";
+
 }

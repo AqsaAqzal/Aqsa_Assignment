@@ -1,6 +1,8 @@
 package util;
 import connpooling.HikariCP;
 import domain.User;
+import services.InventorySQL;
+
 import javax.sql.DataSource;
 import javax.ws.rs.core.Application;
 import java.sql.Connection;
@@ -30,12 +32,10 @@ public class ApplicationClass extends Application {
         PreparedStatement preparedStatement = null;
         ResultSet rs = null;
 
-        String query = "select * from user";
-
         try {
             DataSource dataSource = HikariCP.getDataSource();
             connection = dataSource.getConnection();
-            preparedStatement = connection.prepareStatement(query);
+            preparedStatement = connection.prepareStatement(InventorySQL.USERS_LIST);
             rs = preparedStatement.executeQuery();
 
             while (rs.next()) {

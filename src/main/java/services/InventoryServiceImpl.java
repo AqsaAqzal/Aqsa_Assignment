@@ -10,8 +10,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Base64;
 import util.ApplicationClass;
-
-
 public class InventoryServiceImpl implements InventoryService {
 
     /**
@@ -70,7 +68,7 @@ public class InventoryServiceImpl implements InventoryService {
      *
      * @param item an object of item that is to be created in table as a new record
      */
-    public void insertNewInventoryItem(Inventory item) throws SQLException { //todo handle inventory validation, throw bad request if any validation failed and catch it separately in resource
+    public void insertNewInventoryItem(Inventory item) throws SQLException {
         Inventory.validate(item);
         Connection con = null;
         PreparedStatement preparedStatement = null;
@@ -181,7 +179,6 @@ public class InventoryServiceImpl implements InventoryService {
             DataSource dataSource = HikariCP.getDataSource();
             connection = dataSource.getConnection();
 
-            // todo compare with null not zero
             if (category == null && location == null) {
                 preparedStatement = connection.prepareStatement(InventorySQL.FETCH_ALL_INVENTORIES);
             } else if (category == null) {
@@ -206,7 +203,7 @@ public class InventoryServiceImpl implements InventoryService {
                 rs.close();
             }
             if (preparedStatement != null) {
-                preparedStatement.close(); //todo remove warnings
+                preparedStatement.close();
             }
             if (connection != null) {
                 connection.close();

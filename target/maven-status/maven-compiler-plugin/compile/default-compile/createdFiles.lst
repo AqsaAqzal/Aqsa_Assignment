@@ -1,12 +1,14 @@
 domain\ErrorResponse.class
-services\InventorySQL.class
-domain\ItemCategory.class
 resources\InventoryResource.class
 services\InventoryServiceImpl.class
 common\Constants.class
+common\MockRequestObject.class
+connpooling\HikariCP.class
+services\InventorySQL.class
+domain\ItemCategory.class
+common\MockHttpHeaders.class
 domain\User.class
 domain\ItemLocation.class
 domain\Inventory.class
 util\ApplicationClass.class
 services\InventoryService.class
-connpooling\HikariCP.class
